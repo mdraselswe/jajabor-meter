@@ -51,6 +51,12 @@ export default function ShareModal({
   const [isDownloading, setIsDownloading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [showDistrictNames, setShowDistrictNames] = useState<boolean>(true);
+
+  const handleToggleDistrictNames = (checked: boolean) => {
+    setShowDistrictNames(checked);
+    setUploadedImageUrl(null);
+  };
 
   const {
     isExporting,
@@ -116,7 +122,7 @@ export default function ShareModal({
       clearTimeout(timer);
       window.removeEventListener("resize", updateScale);
     };
-  }, [isOpen, selectedDistrictIds, selectedMemoryIds, userProfile, rank]);
+  }, [isOpen, selectedDistrictIds, selectedMemoryIds, userProfile, rank, showDistrictNames]);
 
   if (!isOpen) return null;
 
@@ -239,13 +245,14 @@ export default function ShareModal({
           rank={rank}
           percentage={percentage}
           unlockedBadges={unlockedBadges}
+          showDistrictNames={showDistrictNames}
         />
       </div>
 
       <div className="min-h-full flex items-center justify-center py-6 sm:py-10">
         <div className="relative max-w-2xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-4 sm:p-6 shadow-2xl my-auto animate-in zoom-in-95 duration-200">
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-slate-800">
           <div>
             <h3 className="font-black text-white text-base sm:text-lg">
               ভ্রমণ সনদপত্র ও শেয়ার
@@ -259,6 +266,30 @@ export default function ShareModal({
             className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition"
           >
             <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Toolbar: District Names Toggle Checkbox & Quick Edit Profile */}
+        <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3 px-1">
+          <label className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-slate-700 text-xs font-bold text-slate-200 cursor-pointer select-none transition active:scale-95 shadow-sm">
+            <input
+              type="checkbox"
+              checked={showDistrictNames}
+              onChange={(e) => handleToggleDistrictNames(e.target.checked)}
+              className="w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-600 focus:ring-0 cursor-pointer accent-emerald-500"
+            />
+            <span>ম্যাপে জেলার নাম দেখান</span>
+          </label>
+
+          <button
+            onClick={() => {
+              onClose();
+              onOpenEditProfile();
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-amber-300 font-semibold border border-slate-700 transition cursor-pointer"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>নাম/ছবি পরিবর্তন</span>
           </button>
         </div>
 
@@ -281,23 +312,10 @@ export default function ShareModal({
                 rank={rank}
                 percentage={percentage}
                 unlockedBadges={unlockedBadges}
+                showDistrictNames={showDistrictNames}
               />
             </div>
           </div>
-        </div>
-
-        {/* Quick Edit Name/Photo Trigger */}
-        <div className="flex items-center justify-center mb-4">
-          <button
-            onClick={() => {
-              onClose();
-              onOpenEditProfile();
-            }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-amber-300 font-semibold border border-slate-700 transition"
-          >
-            <Edit3 className="w-3.5 h-3.5" />
-            <span>সনদে নাম বা ছবি পরিবর্তন করবেন?</span>
-          </button>
         </div>
 
         {/* Primary Action Buttons */}

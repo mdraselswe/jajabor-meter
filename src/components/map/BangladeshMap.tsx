@@ -36,6 +36,7 @@ export default function BangladeshMap({
   const [hoveredDistrict, setHoveredDistrict] = useState<District | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showDistrictNames, setShowDistrictNames] = useState<boolean>(true);
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   // Filter districts based on division and search (supports English & Bangla)
@@ -129,6 +130,19 @@ export default function BangladeshMap({
                 <span>জেলা তালিকা</span>
               </button>
             </div>
+
+            {/* District names visibility toggle */}
+            {viewMode === "map" && (
+              <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-800/90 border border-slate-700 text-xs font-bold text-slate-300 hover:text-white cursor-pointer select-none transition">
+                <input
+                  type="checkbox"
+                  checked={showDistrictNames}
+                  onChange={(e) => setShowDistrictNames(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded text-emerald-500 accent-emerald-500 cursor-pointer"
+                />
+                <span className="hidden sm:inline">জেলার নাম</span>
+              </label>
+            )}
 
             {/* Counter */}
             <div className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-800/90 border border-slate-700 text-xs text-slate-200">
@@ -228,27 +242,29 @@ export default function BangladeshMap({
                   <g key={`map-label-${id}`}>
                     <circle
                       cx={center.x}
-                      cy={center.y - 6}
-                      r="3.5"
+                      cy={center.y - (showDistrictNames ? 6 : 0)}
+                      r={showDistrictNames ? "3.5" : "3"}
                       fill="#F59E0B"
                       stroke="#FFFFFF"
                       strokeWidth="1.5"
                     />
-                    <text
-                      x={center.x}
-                      y={center.y + 7}
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      fill="#FFFFFF"
-                      stroke="#022c22"
-                      strokeWidth="3.5"
-                      strokeLinejoin="round"
-                      paintOrder="stroke fill"
-                      fontSize="11"
-                      fontWeight="900"
-                    >
-                      {displayNameBn}
-                    </text>
+                    {showDistrictNames && (
+                      <text
+                        x={center.x}
+                        y={center.y + 7}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fill="#FFFFFF"
+                        stroke="#022c22"
+                        strokeWidth="3.5"
+                        strokeLinejoin="round"
+                        paintOrder="stroke fill"
+                        fontSize="11"
+                        fontWeight="900"
+                      >
+                        {displayNameBn}
+                      </text>
+                    )}
                   </g>
                 );
               })}

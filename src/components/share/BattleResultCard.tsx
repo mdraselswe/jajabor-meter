@@ -113,7 +113,7 @@ export default function BattleResultCard({
                 avatarUrl={myProfile.avatarUrl}
                 name={myProfile.name}
                 size={56}
-                className={winner === "me" ? "ring-2 ring-emerald-400" : "ring-1 ring-slate-700"}
+                className={winner === "me" ? "border-2 border-emerald-400" : "border border-slate-700"}
               />
               {winner === "me" && (
                 <div className="absolute -top-1 -right-1 p-1 rounded-full bg-emerald-500 text-slate-950 shadow-md">
@@ -159,7 +159,7 @@ export default function BattleResultCard({
                 avatarUrl={null}
                 name={challengerName}
                 size={56}
-                className={winner === "challenger" ? "ring-2 ring-amber-400" : "ring-1 ring-slate-700"}
+                className={winner === "challenger" ? "border-2 border-amber-400" : "border border-slate-700"}
               />
               {winner === "challenger" && (
                 <div className="absolute -top-1 -right-1 p-1 rounded-full bg-amber-500 text-slate-950 shadow-md">
