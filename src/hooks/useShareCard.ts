@@ -26,11 +26,15 @@ export function useShareCard() {
         };
       }
 
+      const targetWidth = cardElement.offsetWidth || 560;
+
       const { toPng } = await import("html-to-image");
       const dataUrl = await toPng(cardElement, {
         cacheBust: false,
         skipFonts: true,
         pixelRatio: 2,
+        width: Math.max(targetWidth, 560),
+        canvasWidth: Math.max(targetWidth, 560) * 2,
         imagePlaceholder: TRANSPARENT_PIXEL,
         style: {
           transform: "none",
@@ -62,6 +66,8 @@ export function useShareCard() {
         allowTaint: true,
         backgroundColor: null,
         logging: false,
+        width: Math.max(cardElement.offsetWidth, 560),
+        windowWidth: 1200,
       });
       const dataUrl = canvas.toDataURL("image/png");
       if (dataUrl && dataUrl.length > 500) {

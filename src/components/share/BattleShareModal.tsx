@@ -110,7 +110,7 @@ export default function BattleShareModal({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md p-3 sm:p-6 animate-in fade-in duration-200">
       <div className="min-h-full flex items-center justify-center py-6 sm:py-10">
-        <div className="relative max-w-xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-4 sm:p-6 shadow-2xl my-auto animate-in zoom-in-95 duration-200">
+        <div className="relative max-w-2xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-4 sm:p-6 shadow-2xl my-auto animate-in zoom-in-95 duration-200">
           {/* Modal Header */}
           <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
             <div className="flex items-center gap-2.5">
