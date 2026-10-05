@@ -111,7 +111,7 @@ export default function BattleShareModal({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md p-3 sm:p-6 animate-in fade-in duration-200">
-      {/* Hidden Off-Screen Dedicated Export Card (Fixed 640px at 0,0, never affected by mobile scroll or viewport) */}
+      {/* Hidden Off-Screen Dedicated Export Card (Fixed 560px at 0,0, never affected by mobile scroll or viewport) */}
       <div
         style={{
           position: "fixed",
@@ -120,9 +120,9 @@ export default function BattleShareModal({
           zIndex: -9999,
           pointerEvents: "none",
           opacity: 0,
-          width: "640px",
-          minWidth: "640px",
-          maxWidth: "640px",
+          width: "560px",
+          minWidth: "560px",
+          maxWidth: "560px",
         }}
         aria-hidden="true"
       >
@@ -132,6 +132,7 @@ export default function BattleShareModal({
           myDistrictIds={myDistrictIds}
           challengerName={challengerName}
           challengerDistrictIds={challengerDistrictIds}
+          isExport={true}
         />
       </div>
 
@@ -161,13 +162,14 @@ export default function BattleShareModal({
           </div>
 
           {/* Result Card Preview */}
-          <div className="flex justify-center mb-5 overflow-x-auto max-w-full pb-2">
+          <div className="flex justify-center mb-5 w-full">
             <BattleResultCard
               cardRef={previewCardRef}
               myProfile={myProfile}
               myDistrictIds={myDistrictIds}
               challengerName={challengerName}
               challengerDistrictIds={challengerDistrictIds}
+              isExport={false}
             />
           </div>
 

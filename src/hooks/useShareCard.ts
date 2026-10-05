@@ -27,15 +27,11 @@ export function useShareCard() {
       }
 
       const targetWidth = cardElement.offsetWidth || 640;
-      const targetHeight = cardElement.offsetHeight || 620;
-
       const { toPng } = await import("html-to-image");
       const dataUrl = await toPng(cardElement, {
-        cacheBust: false,
+        cacheBust: true,
         skipFonts: true,
         pixelRatio: 2,
-        width: Math.max(targetWidth, 640),
-        canvasWidth: Math.max(targetWidth, 640) * 2,
         imagePlaceholder: TRANSPARENT_PIXEL,
         style: {
           transform: "none",
@@ -61,18 +57,12 @@ export function useShareCard() {
     // Strategy 2: html2canvas fallback
     try {
       const html2canvas = (await import("html2canvas")).default;
-      const targetWidth = cardElement.offsetWidth || 640;
-      const targetHeight = cardElement.offsetHeight || 620;
-
       const canvas = await html2canvas(cardElement, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: null,
         logging: false,
-        width: targetWidth,
-        height: targetHeight,
-        windowWidth: 1280,
         scrollX: 0,
         scrollY: 0,
       });
