@@ -55,3 +55,21 @@ export function calculateRank(districtCount: number): TitleRank {
 export function calculatePercentage(districtCount: number): number {
   return Math.min(100, Math.max(0, Math.round((districtCount / 64) * 100)));
 }
+
+export const POINTS_PER_DISTRICT = 10;
+export const POINTS_PER_MEMORY = 5;
+
+export function calculateBonusPoints(memoryCount: number): number {
+  return memoryCount * POINTS_PER_MEMORY;
+}
+
+export function calculateTotalScore(districtCount: number, memoryCount: number): number {
+  return districtCount * POINTS_PER_DISTRICT + calculateBonusPoints(memoryCount);
+}
+
+export function getMemoryRank(memoryCount: number): string {
+  if (memoryCount === 0) return "নির্দোষ পর্যটক";
+  if (memoryCount <= 2) return "নবীন ট্যুর ভুক্তভোগী";
+  if (memoryCount <= 4) return "পাকা যাযাবর ট্রাজেডি কিং";
+  return "ট্যুর ট্রাজেডির ডক্টরেট ডিগ্রিধারী!";
+}

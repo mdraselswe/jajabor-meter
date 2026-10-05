@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { TOUR_MEMORIES } from "@/data/tourMemories";
 import { Smile, Check, Sparkles, Award } from "lucide-react";
 import { toBn } from "@/utils/bengaliDigits";
+import { getMemoryRank, calculateBonusPoints } from "@/utils/scoreCalculator";
 
 interface MemoryChecklistProps {
   selectedMemoryIds: string[];
@@ -17,27 +18,23 @@ export default function MemoryChecklist({
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const checkedCount = selectedMemoryIds.length;
-  const bonusPoints = checkedCount * 5;
+  const bonusPoints = calculateBonusPoints(checkedCount);
+  const memoryRank = getMemoryRank(checkedCount);
 
   const handleClick = (id: string) => {
     const isAdding = !selectedMemoryIds.includes(id);
     onToggleMemory(id);
 
     if (isAdding) {
-      setToastMessage(`+${toBn(5)} ফান পয়েন্ট যুক্ত হয়েছে!`);
+      const nextCount = checkedCount + 1;
+      const nextBonus = calculateBonusPoints(nextCount);
+      setToastMessage(`+${toBn(5)} পয়েন্ট যুক্ত হয়েছে! (মোট বোনাস: ${toBn(nextBonus)} পয়েন্ট)`);
       setTimeout(() => setToastMessage(null), 2500);
+    } else {
+      setToastMessage(`-৫ পয়েন্ট বাদ দেওয়া হয়েছে`);
+      setTimeout(() => setToastMessage(null), 1800);
     }
   };
-
-  // Funny memory titles
-  let memoryRank = "নির্দোষ পর্যটক";
-  if (checkedCount >= 1 && checkedCount <= 2) {
-    memoryRank = "নবীন ট্যুর ভুক্তভোগী";
-  } else if (checkedCount >= 3 && checkedCount <= 4) {
-    memoryRank = "পাকা যাযাবর ট্রাজেডি কিং";
-  } else if (checkedCount >= 5) {
-    memoryRank = "ট্যুর ট্রাজেডির ডক্টরেট ডিগ্রিধারী!";
-  }
 
   return (
     <div className="w-full p-5 bg-slate-900/80 border border-slate-800 rounded-3xl backdrop-blur-md relative overflow-hidden">
@@ -51,18 +48,18 @@ export default function MemoryChecklist({
       {/* Header */}
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Smile className="w-5 h-5 text-amber-400" />
+          <Smile className="w-5 h-5 text-amber-400 shrink-0" />
           <div>
             <h4 className="font-extrabold text-white text-sm sm:text-base leading-tight">
               ট্যুরের কাণ্ডকারখানা চেকলিস্ট
             </h4>
-            <span className="text-[11px] text-amber-300 font-semibold">
+            <span className="text-[11px] text-amber-300 font-semibold block mt-0.5">
               লেভেল: {memoryRank} ({toBn(checkedCount)}/{toBn(TOUR_MEMORIES.length)})
             </span>
           </div>
         </div>
 
-        <div className="text-right">
+        <div className="text-right shrink-0">
           <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/40">
             +{toBn(bonusPoints)} বোনাস পয়েন্ট
           </span>
@@ -70,7 +67,7 @@ export default function MemoryChecklist({
       </div>
 
       <p className="text-xs text-slate-300 mb-3 leading-relaxed">
-        নিচের ঘটনাগুলো আপনার সাথেও ঘটেছে? টিক দিন—প্রতিটি টিক আপনার সনদে এক্সট্রা ফান পয়েন্ট ও রেকর্ড যুক্ত করবে:
+        নিচের ঘটনাগুলো আপনার সাথেও ঘটেছে? টিক দিন—প্রতিটি টিক আপনার মূল মিটারে ও সনদে <span className="text-amber-300 font-bold">+৫ পয়েন্ট</span> এবং বিশেষ অর্জন যুক্ত করবে:
       </p>
 
       {/* Progress Bar */}

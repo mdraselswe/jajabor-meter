@@ -5,6 +5,11 @@ import { toPng } from "html-to-image";
 import { UserProfile, TitleRank } from "@/types";
 import { encodeCompareData, getBaseUrl } from "@/utils/urlEncoder";
 import { toBn } from "@/utils/bengaliDigits";
+import { 
+  calculateTotalScore, 
+  calculateBonusPoints, 
+  getMemoryRank 
+} from "@/utils/scoreCalculator";
 
 const TRANSPARENT_PIXEL =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAEDEB/0wAAAABJRU5ErkJggg==";
@@ -113,11 +118,23 @@ export function useShareCard() {
   );
 
   const getShareableText = useCallback(
-    (userProfile: UserProfile, districtCount: number, rank: TitleRank, districtIds: string[]) => {
+    (
+      userProfile: UserProfile,
+      districtCount: number,
+      rank: TitleRank,
+      districtIds: string[],
+      memoryCount: number = 0
+    ) => {
       const compareQuery = encodeCompareData(userProfile.name, districtIds);
       const liveLink = `${getBaseUrl()}/compare?${compareQuery}`;
+      const totalScore = calculateTotalScore(districtCount, memoryCount);
+      const bonusPoints = calculateBonusPoints(memoryCount);
+      const memoryText =
+        memoryCount > 0
+          ? `\n🎭 ট্যুরের কাণ্ডকারখানা বোনাস: +${toBn(bonusPoints)} পয়েন্ট (${getMemoryRank(memoryCount)})`
+          : "";
 
-      return `যাযাবর মিটার ফলাফল!\nআমি (${userProfile.name}) বাংলাদেশের ${toBn(districtCount)}টি জেলায় ভ্রমণ করে "${rank.title}" পদবী পেয়েছি!\n\nরিভিউ: "${rank.roast}"\n\nআমার সাথে টেক্কা দেওয়ার সাহস আছে? নিচের লিংকে ঢুকে তোমার যাযাবর মিটার মাপো:\n👉 ${liveLink}\n\n#JajaborMeter #যাযাবরমিটার`;
+      return `যাযাবর মিটার ফলাফল!\nআমি (${userProfile.name}) বাংলাদেশের ${toBn(districtCount)}টি জেলায় ভ্রমণ করে মোট ${toBn(totalScore)} পয়েন্ট পেয়ে "${rank.title}" পদবী অর্জন করেছি!${memoryText}\n\nরিভিউ: "${rank.roast}"\n\nআমার সাথে টেক্কা দেওয়ার সাহস আছে? নিচের লিংকে ঢুকে তোমার যাযাবর মিটার মাপো:\n👉 ${liveLink}\n\n#JajaborMeter #যাযাবরমিটার`;
     },
     []
   );

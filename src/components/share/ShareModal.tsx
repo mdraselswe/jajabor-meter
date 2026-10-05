@@ -58,7 +58,8 @@ export default function ShareModal({
     userProfile,
     selectedDistrictIds.length,
     rank,
-    selectedDistrictIds
+    selectedDistrictIds,
+    selectedMemoryIds.length
   );
 
   const handleDownload = async () => {

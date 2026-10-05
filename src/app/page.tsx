@@ -6,7 +6,13 @@ import { District, DISTRICTS } from "@/data/districts";
 import { useJajaborStore } from "@/hooks/useJajaborStore";
 import { useSpeedDetector } from "@/hooks/useSpeedDetector";
 import { useAuth } from "@/hooks/useAuth";
-import { calculateRank, calculatePercentage } from "@/utils/scoreCalculator";
+import { 
+  calculateRank, 
+  calculatePercentage,
+  calculateBonusPoints,
+  calculateTotalScore,
+  getMemoryRank
+} from "@/utils/scoreCalculator";
 import { getUnlockedBadges } from "@/utils/badgeCalculator";
 import { toBn } from "@/utils/bengaliDigits";
 import { PHAPOR_QUIZZES } from "@/data/phaporQuizzes";
@@ -101,8 +107,9 @@ export default function Home() {
   // Score & Ranking
   const selectedCount = selectedDistrictIds.length;
   const memoryCount = selectedMemoryIds.length;
-  const bonusPoints = memoryCount * 5;
-  const totalFunScore = selectedCount * 10 + bonusPoints;
+  const bonusPoints = calculateBonusPoints(memoryCount);
+  const totalFunScore = calculateTotalScore(selectedCount, memoryCount);
+  const memoryRank = getMemoryRank(memoryCount);
 
   const percentage = calculatePercentage(selectedCount);
   const currentRank = calculateRank(selectedCount);
@@ -159,6 +166,14 @@ export default function Home() {
   const handleOpenShare = () => {
     fireConfetti();
     setIsShareModalOpen(true);
+  };
+
+  const handleToggleMemory = (id: string) => {
+    const isAdding = !selectedMemoryIds.includes(id);
+    toggleMemory(id);
+    if (isAdding) {
+      fireConfetti();
+    }
   };
 
   return (
@@ -275,21 +290,49 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Score circle */}
-            <div className="flex flex-col items-center justify-center py-4 bg-slate-950/60 rounded-2xl border border-slate-800/80 mb-5">
-              <span className="text-5xl font-black text-amber-400 tracking-tight">
-                {toBn(selectedCount)}
+            {/* Main Scorecard Box */}
+            <div className="flex flex-col items-center justify-center p-5 bg-gradient-to-b from-slate-950/90 to-slate-900/90 rounded-2xl border border-amber-500/30 mb-5 shadow-inner">
+              <span className="text-[11px] uppercase tracking-wider font-extrabold text-amber-300/90 mb-1 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                মোট যাযাবর স্কোর
               </span>
-              <span className="text-xs text-slate-300 font-semibold mt-1">
-                ৬৪ জেলার মধ্যে ({toBn(percentage)}% বাংলাদেশ)
-              </span>
+              <div className="flex items-baseline gap-1.5 my-0.5">
+                <span className="text-5xl sm:text-6xl font-black text-amber-400 tracking-tight drop-shadow-md">
+                  {toBn(totalFunScore)}
+                </span>
+                <span className="text-sm sm:text-base font-extrabold text-amber-300">
+                  পয়েন্ট
+                </span>
+              </div>
 
-              {/* Bonus points indicator */}
-              {bonusPoints > 0 && (
-                <div className="mt-2 text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
-                  +{toBn(bonusPoints)} কাণ্ডকারখানা বোনাস পয়েন্ট
+              {/* Points Breakdown Badges */}
+              <div className="grid grid-cols-2 gap-2 w-full mt-3 pt-3 border-t border-slate-800/80">
+                {/* 1. District Points */}
+                <div className="flex flex-col items-center p-2 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
+                  <span className="text-[10px] text-slate-400 font-semibold">ভ্রমণ পয়েন্ট</span>
+                  <span className="text-xs font-black text-emerald-400 mt-0.5">
+                    {toBn(selectedCount * 10)} পয়েন্ট
+                  </span>
+                  <span className="text-[10px] text-slate-300 mt-0.5">
+                    {toBn(selectedCount)}/৬৪ জেলা ({toBn(percentage)}%)
+                  </span>
                 </div>
-              )}
+
+                {/* 2. Memory Bonus Points */}
+                <div className={`flex flex-col items-center p-2 rounded-xl border text-center transition-all ${
+                  bonusPoints > 0
+                    ? "bg-amber-500/10 border-amber-500/40 text-amber-300"
+                    : "bg-slate-900/80 border-slate-800 text-slate-400"
+                }`}>
+                  <span className="text-[10px] font-semibold">কাণ্ডকারখানা বোনাস</span>
+                  <span className={`text-xs font-black mt-0.5 ${bonusPoints > 0 ? "text-amber-400" : "text-slate-400"}`}>
+                    +{toBn(bonusPoints)} পয়েন্ট
+                  </span>
+                  <span className="text-[10px] mt-0.5 truncate max-w-full">
+                    {bonusPoints > 0 ? `${toBn(memoryCount)}টি ঘটনা (${memoryRank})` : "০টি ঘটনা যুক্ত"}
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Title & Roast badge */}
@@ -386,7 +429,7 @@ export default function Home() {
           {/* Relatable Tour Memories Checklist */}
           <MemoryChecklist
             selectedMemoryIds={selectedMemoryIds}
-            onToggleMemory={toggleMemory}
+            onToggleMemory={handleToggleMemory}
           />
         </div>
       </div>

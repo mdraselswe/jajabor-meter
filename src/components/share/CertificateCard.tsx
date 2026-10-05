@@ -11,8 +11,14 @@ import {
   Calendar, 
   ShieldCheck, 
   TrendingUp,
-  Award
+  Award,
+  Smile
 } from "lucide-react";
+import { 
+  calculateBonusPoints, 
+  calculateTotalScore, 
+  getMemoryRank 
+} from "@/utils/scoreCalculator";
 
 interface CertificateCardProps {
   cardRef: React.RefObject<HTMLDivElement>;
@@ -28,11 +34,17 @@ export default function CertificateCard({
   cardRef,
   userProfile,
   selectedDistrictIds,
+  selectedMemoryIds = [],
   rank,
   percentage,
   unlockedBadges = [],
 }: CertificateCardProps) {
   const selectedCount = selectedDistrictIds.length;
+  const memoryCount = selectedMemoryIds.length;
+  const bonusPoints = calculateBonusPoints(memoryCount);
+  const totalScore = calculateTotalScore(selectedCount, memoryCount);
+  const memoryRank = getMemoryRank(memoryCount);
+
   const todayDate = new Date().toLocaleDateString("bn-BD", {
     year: "numeric",
     month: "long",
@@ -97,11 +109,17 @@ export default function CertificateCard({
           </span>
         </div>
 
-        {/* Big Percentage Pill on Profile Row */}
+        {/* Total Score & Completion */}
         <div className="text-right shrink-0">
-          <span className="text-[10px] text-slate-400 block font-semibold">ভ্রমণ সম্পন্ন</span>
-          <span className="text-xl sm:text-2xl font-black text-emerald-400 leading-none">
-            {toBn(percentage)}%
+          <span className="text-[10px] text-amber-300/90 block font-bold leading-tight">মোট স্কোর</span>
+          <div className="flex items-baseline justify-end gap-1">
+            <span className="text-lg sm:text-xl font-black text-amber-400 leading-none">
+              {toBn(totalScore)}
+            </span>
+            <span className="text-[10px] font-bold text-amber-200">পয়েন্ট</span>
+          </div>
+          <span className="text-[10px] text-emerald-400 block font-semibold mt-0.5">
+            {toBn(percentage)}% সম্পন্ন
           </span>
         </div>
       </div>
@@ -214,6 +232,26 @@ export default function CertificateCard({
         </p>
       </div>
 
+      {/* Tour Memories Achievement Badge */}
+      {memoryCount > 0 && (
+        <div className="p-2 sm:p-2.5 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900/90 to-amber-950/40 border border-amber-500/40 flex items-center justify-between gap-2 mb-2.5">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="p-1 rounded-lg bg-amber-500/20 text-amber-400 shrink-0">
+              <Smile className="w-3.5 h-3.5" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] text-slate-300 block leading-tight font-medium">ট্যুরের কাণ্ডকারখানা স্বীকৃতি:</span>
+              <span className="text-[11px] sm:text-xs font-black text-amber-200 truncate block">
+                {memoryRank} ({toBn(memoryCount)}টি ঘটনা)
+              </span>
+            </div>
+          </div>
+          <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-black border border-amber-500/50 shrink-0 whitespace-nowrap">
+            +{toBn(bonusPoints)} বোনাস পয়েন্ট
+          </span>
+        </div>
+      )}
+
       {/* 6. Unlocked Badges (compact single row if any) */}
       {unlockedBadges.length > 0 && (
         <div className="flex items-center gap-1.5 flex-wrap mb-2.5">
@@ -238,7 +276,7 @@ export default function CertificateCard({
             jajabor.mdrasel.site
           </span>
           <span className="text-[10px] text-slate-400 leading-tight">
-            যাযাবর মিটার ২০২৬ | সনদ নং: JJB-{toBn(selectedCount)}
+            যাযাবর মিটার ২০২৬ | সনদ নং: JJB-{toBn(totalScore)}-{toBn(selectedCount)}
           </span>
         </div>
         <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
