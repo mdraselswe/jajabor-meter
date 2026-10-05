@@ -55,6 +55,9 @@ export default function CertificateCard({
     <div
       ref={cardRef}
       data-certificate-card="true"
+      style={{
+        fontFamily: "var(--font-noto-bengali), 'Noto Sans Bengali', 'Hind Siliguri', 'Nirmala UI', 'Kohinoor Bangla', system-ui, -apple-system, sans-serif",
+      }}
       className="w-full max-w-[440px] sm:max-w-[460px] bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-white rounded-3xl p-4 sm:p-5 border-2 border-emerald-500/60 shadow-2xl relative select-none box-border overflow-hidden"
     >
       {/* Decorative Golden Corner Glows */}
@@ -62,24 +65,25 @@ export default function CertificateCard({
       <div className="absolute bottom-0 left-0 w-36 h-36 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
 
       {/* 1. Header (Compact) */}
-      <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-emerald-500/30">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+      <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-emerald-500/30 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
             <Compass className="w-4 h-4" />
           </div>
-          <div>
-            <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-extrabold block leading-none">
+          <div className="min-w-0">
+            <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-extrabold block leading-none whitespace-nowrap">
               অফিসিয়াল ভ্রমণ সনদপত্র
             </span>
-            <h3 className="text-xs sm:text-sm font-black text-white leading-tight mt-0.5">
+            <h3 className="text-xs sm:text-sm font-black text-white leading-tight mt-0.5 whitespace-nowrap">
               যাযাবর মিটার ২০২৬
             </h3>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 text-[11px] text-slate-300 font-medium bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-800">
-          <Calendar className="w-3 h-3 text-amber-400" />
-          <span>{todayDate}</span>
+        {/* Clean Date Badge with Generous Safety Padding to avoid border collision */}
+        <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-amber-300 font-bold bg-slate-900/90 pl-3 pr-4 sm:pl-3.5 sm:pr-4.5 py-1.5 rounded-xl border border-slate-800 shrink-0 whitespace-nowrap leading-normal shadow-sm">
+          <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <span className="whitespace-nowrap">{todayDate}</span>
         </div>
       </div>
 
@@ -89,37 +93,37 @@ export default function CertificateCard({
           avatarUrl={userProfile.avatarUrl}
           name={userProfile.name}
           size={48}
-          className="ring-2 ring-amber-400"
+          className="ring-2 ring-amber-400 shrink-0"
         />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <h4 className="text-sm sm:text-base font-black text-white truncate">
+            <h4 className="text-sm sm:text-base font-black text-white break-words leading-snug">
               {userProfile.name}
             </h4>
             {userProfile.isLoggedIn ? (
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             ) : (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 shrink-0">
                 গেস্ট
               </span>
             )}
           </div>
-          <span className="text-[11px] sm:text-xs text-amber-300 font-bold block mt-0.5 truncate">
+          <span className="text-[11px] sm:text-xs text-amber-300 font-bold block mt-0.5 break-words">
             পদবী: {rank.title}
           </span>
         </div>
 
-        {/* Total Score & Completion */}
+        {/* District Travel Progress (Core Theme Focus) */}
         <div className="text-right shrink-0">
-          <span className="text-[10px] text-amber-300/90 block font-bold leading-tight">মোট স্কোর</span>
+          <span className="text-[10px] text-slate-400 block font-semibold leading-tight">ভ্রমণ সম্পন্ন</span>
           <div className="flex items-baseline justify-end gap-1">
-            <span className="text-lg sm:text-xl font-black text-amber-400 leading-none">
-              {toBn(totalScore)}
+            <span className="text-xl sm:text-2xl font-black text-emerald-400 leading-none">
+              {toBn(selectedCount)}
             </span>
-            <span className="text-[10px] font-bold text-amber-200">পয়েন্ট</span>
+            <span className="text-xs sm:text-sm font-extrabold text-slate-300">/ ৬৪ জেলা</span>
           </div>
-          <span className="text-[10px] text-emerald-400 block font-semibold mt-0.5">
-            {toBn(percentage)}% সম্পন্ন
+          <span className="text-[10px] text-amber-300 font-bold block mt-0.5 whitespace-nowrap">
+            {toBn(percentage)}% বাংলাদেশ
           </span>
         </div>
       </div>
@@ -241,7 +245,7 @@ export default function CertificateCard({
             </div>
             <div className="min-w-0">
               <span className="text-[10px] text-slate-300 block leading-tight font-medium">ট্যুরের কাণ্ডকারখানা স্বীকৃতি:</span>
-              <span className="text-[11px] sm:text-xs font-black text-amber-200 truncate block">
+              <span className="text-[11px] sm:text-xs font-black text-amber-200 block break-words">
                 {memoryRank} ({toBn(memoryCount)}টি ঘটনা)
               </span>
             </div>
@@ -276,7 +280,7 @@ export default function CertificateCard({
             jajabor.mdrasel.site
           </span>
           <span className="text-[10px] text-slate-400 leading-tight">
-            যাযাবর মিটার ২০২৬ | সনদ নং: JJB-{toBn(totalScore)}-{toBn(selectedCount)}
+            যাযাবর মিটার ২০২৬ | সনদ নং: JJB-{toBn(selectedCount)}
           </span>
         </div>
         <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">

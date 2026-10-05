@@ -290,49 +290,35 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Main Scorecard Box */}
-            <div className="flex flex-col items-center justify-center p-5 bg-gradient-to-b from-slate-950/90 to-slate-900/90 rounded-2xl border border-amber-500/30 mb-5 shadow-inner">
-              <span className="text-[11px] uppercase tracking-wider font-extrabold text-amber-300/90 mb-1 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                মোট যাযাবর স্কোর
+            {/* Main Scorecard Box - Core Focus on Visited Districts */}
+            <div className="flex flex-col items-center justify-center p-5 bg-gradient-to-b from-slate-950/90 to-slate-900/90 rounded-2xl border border-slate-800/80 mb-5 shadow-inner">
+              <span className="text-xs uppercase tracking-wider font-extrabold text-amber-400 mb-1 flex items-center gap-1.5">
+                <Gauge className="w-4 h-4 text-amber-400" />
+                ভ্রমণ সম্পন্ন জেলা
               </span>
-              <div className="flex items-baseline gap-1.5 my-0.5">
+              <div className="flex items-baseline gap-2 my-1">
                 <span className="text-5xl sm:text-6xl font-black text-amber-400 tracking-tight drop-shadow-md">
-                  {toBn(totalFunScore)}
+                  {toBn(selectedCount)}
                 </span>
-                <span className="text-sm sm:text-base font-extrabold text-amber-300">
-                  পয়েন্ট
+                <span className="text-base sm:text-lg font-black text-slate-300">
+                  / ৬৪ জেলা
                 </span>
               </div>
+              <span className="text-xs text-emerald-400 font-bold mt-0.5">
+                {toBn(percentage)}% বাংলাদেশ ঘুরে দেখা হয়েছে
+              </span>
 
-              {/* Points Breakdown Badges */}
-              <div className="grid grid-cols-2 gap-2 w-full mt-3 pt-3 border-t border-slate-800/80">
-                {/* 1. District Points */}
-                <div className="flex flex-col items-center p-2 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
-                  <span className="text-[10px] text-slate-400 font-semibold">ভ্রমণ পয়েন্ট</span>
-                  <span className="text-xs font-black text-emerald-400 mt-0.5">
-                    {toBn(selectedCount * 10)} পয়েন্ট
-                  </span>
-                  <span className="text-[10px] text-slate-300 mt-0.5">
-                    {toBn(selectedCount)}/৬৪ জেলা ({toBn(percentage)}%)
-                  </span>
+              {/* Bonus points indicator from tour memories */}
+              {bonusPoints > 0 ? (
+                <div className="mt-3.5 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-bold shadow-sm">
+                  <Smile className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>+{toBn(bonusPoints)} কাণ্ডকারখানা বোনাস পয়েন্ট ({memoryRank})</span>
                 </div>
-
-                {/* 2. Memory Bonus Points */}
-                <div className={`flex flex-col items-center p-2 rounded-xl border text-center transition-all ${
-                  bonusPoints > 0
-                    ? "bg-amber-500/10 border-amber-500/40 text-amber-300"
-                    : "bg-slate-900/80 border-slate-800 text-slate-400"
-                }`}>
-                  <span className="text-[10px] font-semibold">কাণ্ডকারখানা বোনাস</span>
-                  <span className={`text-xs font-black mt-0.5 ${bonusPoints > 0 ? "text-amber-400" : "text-slate-400"}`}>
-                    +{toBn(bonusPoints)} পয়েন্ট
-                  </span>
-                  <span className="text-[10px] mt-0.5 truncate max-w-full">
-                    {bonusPoints > 0 ? `${toBn(memoryCount)}টি ঘটনা (${memoryRank})` : "০টি ঘটনা যুক্ত"}
-                  </span>
+              ) : (
+                <div className="mt-3 text-[11px] text-slate-400 font-medium text-center">
+                  নিচের চেকলিস্ট থেকে কাণ্ডকারখানা টিক দিয়ে অতিরিক্ত বোনাস পয়েন্ট অর্জন করুন
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Title & Roast badge */}

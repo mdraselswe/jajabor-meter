@@ -19,6 +19,15 @@ export function useShareCard() {
   const [copySuccess, setCopySuccess] = useState(false);
 
   const generateCardPng = async (cardElement: HTMLElement): Promise<string> => {
+    // 1. Ensure all custom Bengali fonts are fully loaded before capturing
+    if (typeof document !== "undefined" && document.fonts) {
+      try {
+        await document.fonts.ready;
+      } catch (e) {
+        // safe fallback
+      }
+    }
+
     // Strategy 1: html-to-image with decode safeguard (Native SVG foreignObject rendering with perfect Bengali ligatures & alignment)
     try {
       let originalDecode: typeof HTMLImageElement.prototype.decode | null = null;
@@ -31,7 +40,6 @@ export function useShareCard() {
         };
       }
 
-      const targetWidth = cardElement.offsetWidth || 640;
       const { toPng } = await import("html-to-image");
       const dataUrl = await toPng(cardElement, {
         cacheBust: true,
@@ -55,7 +63,7 @@ export function useShareCard() {
       console.warn("html-to-image issue, falling back to html2canvas:", h2iError);
     }
 
-    // Strategy 2: html2canvas fallback
+    // Strategy 2: html2canvas fallback with exact element dimension and zero scroll offset
     try {
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(cardElement, {
@@ -64,6 +72,11 @@ export function useShareCard() {
         allowTaint: true,
         backgroundColor: null,
         logging: false,
+        width: cardElement.offsetWidth,
+        height: cardElement.offsetHeight,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: document.documentElement.offsetWidth,
       });
       const dataUrl = canvas.toDataURL("image/png");
       if (dataUrl && dataUrl.length > 500) {
@@ -134,7 +147,7 @@ export function useShareCard() {
           ? `\n🎭 ট্যুরের কাণ্ডকারখানা বোনাস: +${toBn(bonusPoints)} পয়েন্ট (${getMemoryRank(memoryCount)})`
           : "";
 
-      return `যাযাবর মিটার ফলাফল!\nআমি (${userProfile.name}) বাংলাদেশের ${toBn(districtCount)}টি জেলায় ভ্রমণ করে মোট ${toBn(totalScore)} পয়েন্ট পেয়ে "${rank.title}" পদবী অর্জন করেছি!${memoryText}\n\nরিভিউ: "${rank.roast}"\n\nআমার সাথে টেক্কা দেওয়ার সাহস আছে? নিচের লিংকে ঢুকে তোমার যাযাবর মিটার মাপো:\n👉 ${liveLink}\n\n#JajaborMeter #যাযাবরমিটার`;
+      return `যাযাবর মিটার ফলাফল!\nআমি (${userProfile.name}) বাংলাদেশের ${toBn(districtCount)}টি জেলায় ভ্রমণ করে "${rank.title}" পদবী অর্জন করেছি!${memoryText}\n\nরিভিউ: "${rank.roast}"\n\nআমার সাথে টেক্কা দেওয়ার সাহস আছে? নিচের লিংকে ঢুকে তোমার যাযাবর মিটার মাপো:\n👉 ${liveLink}\n\n#JajaborMeter #যাযাবরমিটার`;
     },
     []
   );
