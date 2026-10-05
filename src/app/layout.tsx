@@ -3,6 +3,7 @@ import { Noto_Sans_Bengali } from "next/font/google";
 import "@/styles/globals.css";
 import { Compass, Heart, Swords } from "lucide-react";
 import Link from "next/link";
+import VisitorTracker from "@/components/analytics/VisitorTracker";
 
 const notoSansBengali = Noto_Sans_Bengali({
   subsets: ["bengali"],
@@ -57,6 +58,7 @@ export default function RootLayout({
   return (
     <html lang="bn" className={notoSansBengali.variable}>
       <body className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
+        <VisitorTracker />
         {/* Universal Funny Header */}
         <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950/90 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -106,9 +108,13 @@ export default function RootLayout({
             <p className="text-slate-400">
               সতর্কবাণী: বেশি ফাঁপর মারিলে বন্ধুরা ট্যুরে নেওয়া বন্ধ করে দিতে পারে!
             </p>
-            <p className="text-slate-400">
-              © ২০২৬ যাযাবর মিটার
-            </p>
+            <div className="flex items-center gap-2.5 text-slate-400">
+              <span>© ২০২৬ যাযাবর মিটার</span>
+              <span>•</span>
+              <Link href="/admin" className="hover:text-emerald-400 transition text-[11px]" title="অ্যাডমিন ড্যাশবোর্ড">
+                অ্যাডমিন
+              </Link>
+            </div>
           </div>
         </footer>
       </body>
