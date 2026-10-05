@@ -47,24 +47,31 @@ export default function CertificateCard({
       }}
       className="w-[580px] max-w-full mx-auto text-white rounded-2xl p-4 sm:p-5 border-2 border-emerald-500/70 shadow-2xl relative select-none box-border"
     >
-      {/* 1. Compact Header */}
+      {/* 1. Header: Explicit Visited Districts Travel Summary */}
       <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-emerald-500/30 gap-2 relative z-10">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 shadow-sm">
             <Compass className="w-4 h-4" />
           </div>
-          <div className="min-w-0 flex items-center gap-2">
-            <h3 className="text-sm sm:text-base font-black text-white leading-none whitespace-nowrap">
-              যাযাবর মিটার ২০২৬
-            </h3>
-            <span className="text-[10px] uppercase font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-1.5 py-0.5 rounded leading-none whitespace-nowrap">
-              সনদপত্র
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm sm:text-base font-black text-white leading-none whitespace-nowrap">
+                ঘুরে দেখা জেলার ভ্রমণ সারাংশ
+              </h3>
+              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-1.5 py-0.5 rounded leading-none whitespace-nowrap">
+                যাযাবর মিটার
+              </span>
+            </div>
+            <span className="text-[10.5px] text-amber-300 font-bold block leading-tight mt-1 whitespace-nowrap">
+              {selectedCount > 0
+                ? `৬৪ জেলার মধ্যে ${toBn(selectedCount)}টি জেলা ভ্রমণ সম্পন্ন (${toBn(percentage)}%)`
+                : "৬৪ জেলার ভ্রমণ মানচিত্র ও সারাংশ"}
             </span>
           </div>
         </div>
 
         {/* Date Badge */}
-        <div className="flex items-center gap-1 text-[11px] text-amber-300 font-bold bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-800 shrink-0 whitespace-nowrap">
+        <div className="flex items-center gap-1 text-[11px] text-amber-300/90 font-bold bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-800 shrink-0 whitespace-nowrap">
           <Calendar className="w-3 h-3 text-amber-400 shrink-0" />
           <span className="whitespace-nowrap">{todayDate}</span>
         </div>
@@ -116,6 +123,9 @@ export default function CertificateCard({
 
           {/* Focused Travel Metric Box */}
           <div className="text-right shrink-0 bg-slate-950/80 border border-emerald-500/30 px-3 py-1.5 rounded-lg shadow-inner">
+            <span className="text-[9.5px] text-slate-400 block font-semibold leading-none mb-1">
+              ঘুরে দেখা জেলা
+            </span>
             <div className="flex items-baseline justify-end gap-1 leading-none">
               <span className="text-xl font-black text-emerald-400">
                 {toBn(selectedCount)}
