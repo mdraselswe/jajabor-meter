@@ -96,10 +96,10 @@ export default function BattleResultCard({
           </div>
         </div>
 
-        {/* Clean, Premium Themed Date Badge */}
-        <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-amber-300 font-bold bg-amber-500/15 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-amber-500/35 shrink-0 whitespace-nowrap shadow-sm shadow-amber-950/40 leading-normal">
+        {/* Clean, Premium Themed Date Badge with Generous Right Padding */}
+        <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-amber-300 font-bold bg-amber-500/15 pl-3 pr-4 sm:pl-3.5 sm:pr-4.5 py-1.5 sm:py-2 rounded-xl border border-amber-500/35 shrink-0 whitespace-nowrap shadow-sm shadow-amber-950/40 leading-normal">
           <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span>{todayDate}</span>
+          <span className="whitespace-nowrap">{todayDate}</span>
         </div>
       </div>
 
@@ -122,14 +122,20 @@ export default function BattleResultCard({
               )}
             </div>
 
-            <div className="text-xs sm:text-sm font-black text-white text-center leading-normal block mb-1 break-words w-full px-1">
-              {myProfile.name}
-            </div>
-            <div className="text-[10px] sm:text-xs text-emerald-400 font-bold leading-normal text-center block mb-2 sm:mb-2.5 px-1">
-              {myRank.title}
+            <div className="w-full text-center mb-1 px-1">
+              <div className="text-xs sm:text-sm font-black text-white leading-normal break-words">
+                {myProfile.name}
+              </div>
             </div>
 
-            <div className="w-full py-2 sm:py-2.5 px-2 bg-slate-950/80 rounded-xl border border-slate-800 text-center block">
+            {/* Dedicated Min-Height Container to PREVENT any score box collision */}
+            <div className="w-full min-h-[38px] flex items-center justify-center text-center px-1 mb-2">
+              <span className="text-[10px] sm:text-xs text-emerald-400 font-bold leading-snug block">
+                {myRank.title}
+              </span>
+            </div>
+
+            <div className="w-full py-2 sm:py-2.5 px-2 bg-slate-950/80 rounded-xl border border-slate-800 text-center block mt-1">
               <span className="text-xl sm:text-2xl font-black text-emerald-400 block leading-tight">
                 {toBn(myCount)}
               </span>
@@ -162,14 +168,20 @@ export default function BattleResultCard({
               )}
             </div>
 
-            <div className="text-xs sm:text-sm font-black text-white text-center leading-normal block mb-1 break-words w-full px-1">
-              {challengerName}
-            </div>
-            <div className="text-[10px] sm:text-xs text-amber-400 font-bold leading-normal text-center block mb-2 sm:mb-2.5 px-1">
-              {challengerRank.title}
+            <div className="w-full text-center mb-1 px-1">
+              <div className="text-xs sm:text-sm font-black text-white leading-normal break-words">
+                {challengerName}
+              </div>
             </div>
 
-            <div className="w-full py-2 sm:py-2.5 px-2 bg-slate-950/80 rounded-xl border border-slate-800 text-center block">
+            {/* Dedicated Min-Height Container to PREVENT any score box collision */}
+            <div className="w-full min-h-[38px] flex items-center justify-center text-center px-1 mb-2">
+              <span className="text-[10px] sm:text-xs text-amber-400 font-bold leading-snug block">
+                {challengerRank.title}
+              </span>
+            </div>
+
+            <div className="w-full py-2 sm:py-2.5 px-2 bg-slate-950/80 rounded-xl border border-slate-800 text-center block mt-1">
               <span className="text-xl sm:text-2xl font-black text-amber-400 block leading-tight">
                 {toBn(challengerCount)}
               </span>
@@ -181,24 +193,28 @@ export default function BattleResultCard({
         </div>
       </div>
 
-      {/* 3. Winner Callout Banner */}
-      <div className="p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-slate-900 to-amber-500/15 border border-amber-500/40 text-center mb-3.5 sm:mb-4 relative z-10">
-        <div className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-black text-amber-300 leading-normal mb-1">
-          <Trophy className="w-4 h-4 text-amber-400 shrink-0 inline-block mr-1" />
-          <span>{winnerTitle}</span>
+      {/* 3. Winner Callout Banner - Structured as separate blocks so ZERO text overlap can ever occur */}
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-slate-900 to-amber-500/15 border border-amber-500/40 text-center mb-3.5 sm:mb-4 relative z-10">
+        <div className="flex items-center justify-center mb-1.5">
+          <div className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-sm">
+            <Trophy className="w-4 h-4" />
+          </div>
         </div>
-        <div className="text-[11px] sm:text-xs text-slate-200 leading-normal font-medium block">
+        <div className="text-xs sm:text-sm font-black text-amber-300 text-center leading-normal mb-1 px-2">
+          {winnerTitle}
+        </div>
+        <div className="text-[11px] sm:text-xs text-slate-200 text-center leading-normal font-medium px-2">
           {winnerSub}
         </div>
       </div>
 
       {/* 4. Battle Stats Highlights */}
       <div className="space-y-2.5 sm:space-y-3 mb-3.5 sm:mb-4 relative z-10">
-        {/* Row 1: Common Districts */}
+        {/* Row 1: Common Districts - Short single-line label guaranteed to NEVER wrap */}
         <div className="px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs">
-          <span className="text-slate-300 flex items-center gap-1.5 sm:gap-2 font-medium text-[11px] sm:text-xs leading-normal">
-            <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 shrink-0 inline-block" />
-            উভয়ের কমন জেলাসমূহ:
+          <span className="text-slate-300 flex items-center gap-1.5 font-semibold text-[11px] sm:text-xs leading-normal whitespace-nowrap">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span>উভয়ের কমন জেলা:</span>
           </span>
           <span className="font-black text-emerald-300 whitespace-nowrap text-xs sm:text-sm leading-normal">
             {toBn(commonCount)}টি জেলা
