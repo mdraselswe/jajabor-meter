@@ -5,6 +5,7 @@ import { UserProfile, TitleRank, SpecialBadge } from "@/types";
 import CertificateCard from "./CertificateCard";
 import { useShareCard } from "@/hooks/useShareCard";
 import { encodeCompareData, getBaseUrl } from "@/utils/urlEncoder";
+import { toBn } from "@/utils/bengaliDigits";
 import { 
   Download, 
   Share2, 
@@ -52,6 +53,12 @@ export default function ShareModal({
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showDistrictNames, setShowDistrictNames] = useState<boolean>(true);
+  const [isSharingSocial, setIsSharingSocial] = useState<string | null>(null);
+
+  // Invalidate cached upload whenever districts, profile, or options change
+  useEffect(() => {
+    setUploadedImageUrl(null);
+  }, [selectedDistrictIds, selectedMemoryIds, userProfile.name, userProfile.avatarUrl, rank, showDistrictNames]);
 
   const handleToggleDistrictNames = (checked: boolean) => {
     setShowDistrictNames(checked);
@@ -63,7 +70,6 @@ export default function ShareModal({
     copySuccess,
     downloadImage,
     uploadCertificate,
-    getShareableText,
     copyShareText,
     shareNative,
   } = useShareCard();
@@ -88,7 +94,7 @@ export default function ShareModal({
       } finally {
         if (isMounted) setIsUploading(false);
       }
-    }, 300);
+    }, 400);
 
     return () => {
       isMounted = false;
@@ -131,18 +137,13 @@ export default function ShareModal({
     const memoryParam = selectedMemoryIds && selectedMemoryIds.length > 0 ? `&m=${encodeURIComponent(selectedMemoryIds.join(","))}` : "";
     const activeImg = imgUrl ?? uploadedImageUrl;
     const imgParam = activeImg ? `&img=${encodeURIComponent(activeImg)}` : "";
-    return `${getBaseUrl()}/compare?${compareQuery}${memoryParam}${imgParam}`;
+    const timeParam = `&t=${Date.now()}`;
+    return `${getBaseUrl()}/compare?${compareQuery}${memoryParam}${imgParam}${timeParam}`;
   };
 
   const getDynamicShareText = (imgUrl?: string | null) => {
-    return getShareableText(
-      userProfile,
-      selectedDistrictIds.length,
-      rank,
-      selectedDistrictIds,
-      selectedMemoryIds.length,
-      imgUrl ?? uploadedImageUrl
-    );
+    const link = getDynamicLink(imgUrl);
+    return `যাযাবর মিটার ভ্রমণ ফলাফল!\nআমি (${userProfile.name}) বাংলাদেশের ${toBn(selectedDistrictIds.length)}টি জেলায় ভ্রমণ সম্পন্ন করেছি! পদবী: "${rank.title}"\n\nরিভিউ: "${rank.roast}"\n\nআমার ঘুরে দেখা জেলা ও ভ্রমণ সারাংশ দেখতে নিচের লিংকে চাপুন:\n👉 ${link}\n\n#JajaborMeter #যাযাবরমিটার`;
   };
 
   const ensureUploadedImage = async (): Promise<string | null> => {
@@ -151,7 +152,10 @@ export default function ShareModal({
     if (!targetElement) return null;
     try {
       setIsUploading(true);
-      const url = await uploadCertificate(targetElement);
+      const uploadPromise = uploadCertificate(targetElement);
+      // Give upload max 3.5s so social sharing popup is never hung by slow networks
+      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3500));
+      const url = await Promise.race([uploadPromise, timeoutPromise]);
       if (url) {
         setUploadedImageUrl(url);
         return url;
@@ -181,6 +185,7 @@ export default function ShareModal({
 
   const handleNativeShare = async () => {
     try {
+      setIsSharingSocial("native");
       const targetElement = exportCardRef.current;
       if (!targetElement) return;
       const activeUrl = await ensureUploadedImage();
@@ -189,34 +194,51 @@ export default function ShareModal({
       await shareNative(targetElement, currentShareText, "যাযাবর মিটার সনদপত্র", safeName);
     } catch (e) {
       console.error("Native share caught error:", e);
+    } finally {
+      setIsSharingSocial(null);
     }
   };
 
   const handleWhatsAppShare = async () => {
-    const activeUrl = await ensureUploadedImage();
-    const currentShareText = getDynamicShareText(activeUrl);
-    window.open(`https://wa.me/?text=${encodeURIComponent(currentShareText)}`, "_blank");
+    try {
+      setIsSharingSocial("wa");
+      const activeUrl = await ensureUploadedImage();
+      const currentShareText = getDynamicShareText(activeUrl);
+      window.open(`https://wa.me/?text=${encodeURIComponent(currentShareText)}`, "_blank");
+    } finally {
+      setIsSharingSocial(null);
+    }
   };
 
   const handleFacebookShare = async () => {
-    const activeUrl = await ensureUploadedImage();
-    const link = getDynamicLink(activeUrl);
-    const currentShareText = getDynamicShareText(activeUrl);
-    copyShareText(currentShareText);
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent(currentShareText)}`,
-      "_blank"
-    );
+    try {
+      setIsSharingSocial("fb");
+      const activeUrl = await ensureUploadedImage();
+      const link = getDynamicLink(activeUrl);
+      const currentShareText = getDynamicShareText(activeUrl);
+      copyShareText(currentShareText);
+      window.open(
+        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent(currentShareText)}`,
+        "_blank"
+      );
+    } finally {
+      setIsSharingSocial(null);
+    }
   };
 
   const handleTelegramShare = async () => {
-    const activeUrl = await ensureUploadedImage();
-    const link = getDynamicLink(activeUrl);
-    const currentShareText = getDynamicShareText(activeUrl);
-    window.open(
-      `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(currentShareText)}`,
-      "_blank"
-    );
+    try {
+      setIsSharingSocial("tg");
+      const activeUrl = await ensureUploadedImage();
+      const link = getDynamicLink(activeUrl);
+      const currentShareText = getDynamicShareText(activeUrl);
+      window.open(
+        `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(currentShareText)}`,
+        "_blank"
+      );
+    } finally {
+      setIsSharingSocial(null);
+    }
   };
 
   return (
@@ -367,7 +389,8 @@ export default function ShareModal({
               const activeUrl = await ensureUploadedImage();
               copyShareText(getDynamicShareText(activeUrl));
             }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 font-semibold border border-slate-700 transition"
+            disabled={!!isSharingSocial}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 font-semibold border border-slate-700 transition cursor-pointer"
           >
             {copySuccess ? (
               <>
@@ -385,26 +408,40 @@ export default function ShareModal({
           {/* WhatsApp */}
           <button
             onClick={handleWhatsAppShare}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 text-xs font-bold border border-emerald-700/60 transition"
+            disabled={!!isSharingSocial}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 text-xs font-bold border border-emerald-700/60 transition cursor-pointer"
           >
-            <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+            {isSharingSocial === "wa" ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-400" />
+            ) : (
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+            )}
             <span>WhatsApp</span>
           </button>
 
           {/* Facebook */}
           <button
             onClick={handleFacebookShare}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-950/80 hover:bg-blue-900 text-blue-200 text-xs font-bold border border-blue-700/60 transition"
+            disabled={!!isSharingSocial}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-950/80 hover:bg-blue-900 text-blue-200 text-xs font-bold border border-blue-700/60 transition cursor-pointer"
           >
+            {isSharingSocial === "fb" ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-300" />
+            ) : null}
             <span>Facebook</span>
           </button>
 
           {/* Telegram */}
           <button
             onClick={handleTelegramShare}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-950/80 hover:bg-sky-900 text-sky-200 text-xs font-bold border border-sky-700/60 transition"
+            disabled={!!isSharingSocial}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-950/80 hover:bg-sky-900 text-sky-200 text-xs font-bold border border-sky-700/60 transition cursor-pointer"
           >
-            <Send className="w-3.5 h-3.5 text-sky-400" />
+            {isSharingSocial === "tg" ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-sky-300" />
+            ) : (
+              <Send className="w-3.5 h-3.5 text-sky-400" />
+            )}
             <span>Telegram</span>
           </button>
         </div>

@@ -30,10 +30,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     count = rawD.split(",").filter(Boolean).length;
   }
 
+  const rawT = searchParams.t;
   const mParam = typeof rawM === "string" ? rawM : "";
   const rank = calculateRank(count);
+  const percentage = Math.round((count / 64) * 100);
 
-  const fallbackOgUrl = `https://jajabor.mdrasel.site/api/og?n=${encodeURIComponent(name)}&d=${encodeURIComponent(dParam)}&m=${encodeURIComponent(mParam)}`;
+  const fallbackOgUrl = `https://jajabor.mdrasel.site/api/og?n=${encodeURIComponent(name)}&d=${encodeURIComponent(dParam)}&m=${encodeURIComponent(mParam)}${rawT ? `&t=${encodeURIComponent(String(rawT))}` : `&v=3`}`;
 
   const rawImg = searchParams.img;
   let finalImageUrl = fallbackOgUrl;
@@ -45,13 +47,22 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     }
   }
 
+  const queryParts = [
+    `n=${encodeURIComponent(name)}`,
+    `d=${encodeURIComponent(dParam)}`,
+  ];
+  if (mParam) queryParts.push(`m=${encodeURIComponent(mParam)}`);
+  if (rawImg && typeof rawImg === "string") queryParts.push(`img=${encodeURIComponent(rawImg)}`);
+  if (rawT && typeof rawT === "string") queryParts.push(`t=${encodeURIComponent(rawT)}`);
+  const canonicalUrl = `https://jajabor.mdrasel.site/compare?${queryParts.join("&")}`;
+
   return {
-    title: `${name}-এর যাযাবর মিটার ভ্রমণ ফলাফল ও ১v১ যুদ্ধ চ্যালেঞ্জ`,
-    description: `আমি (${name}) বাংলাদেশের ${toBn(count)}টি জেলায় ভ্রমণ করে "${rank.title}" পদবী পেয়েছি! আমার সাথে টেক্কা দেওয়ার সাহস আছে?`,
+    title: `${name}-এর ঘুরে দেখা জেলার ভ্রমণ সারাংশ | যাযাবর মিটার`,
+    description: `আমি (${name}) বাংলাদেশের ৬৪ জেলার মধ্যে ${toBn(count)}টি জেলা ভ্রমণ করে "${rank.title}" পদবী পেয়েছি! আমার সাথে টেক্কা দেওয়ার সাহস আছে?`,
     openGraph: {
-      title: `${name}-এর ভ্রমণ সনদপত্র | যাযাবর মিটার ২০২৬`,
-      description: `বাংলাদেশের ${toBn(count)}টি জেলা ভ্রমণ করে অর্জিত পদবী: "${rank.title}"! টেক্কা দেওয়ার সাহস থাকলে লিংকে চাপুন!`,
-      url: `https://jajabor.mdrasel.site/compare?n=${encodeURIComponent(name)}&d=${encodeURIComponent(dParam)}`,
+      title: `${name}-এর ঘুরে দেখা জেলার ভ্রমণ সারাংশ | যাযাবর মিটার`,
+      description: `বাংলাদেশের ৬৪ জেলার মধ্যে ${toBn(count)}টি জেলা ভ্রমণ সম্পন্ন (${toBn(percentage)}%)! অর্জিত পদবী: "${rank.title}"। টেক্কা দেওয়ার সাহস থাকলে লিংকে চাপুন!`,
+      url: canonicalUrl,
       siteName: "যাযাবর মিটার",
       locale: "bn_BD",
       type: "website",
@@ -60,15 +71,15 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
           url: finalImageUrl,
           width: 1200,
           height: 630,
-          alt: `${name}-এর অফিসিয়াল যাযাবর ভ্রমণ সনদপত্র`,
+          alt: `${name}-এর ঘুরে দেখা জেলার ভ্রমণ সারাংশ`,
           type: "image/png",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${name}-এর যাযাবর মিটার ভ্রমণ সনদপত্র`,
-      description: `বাংলাদেশের ${toBn(count)}টি জেলায় ভ্রমণ সম্পন্ন! পদবী: ${rank.title}`,
+      title: `${name}-এর ঘুরে দেখা জেলার ভ্রমণ সারাংশ | যাযাবর মিটার`,
+      description: `বাংলাদেশের ৬৪ জেলার মধ্যে ${toBn(count)}টি জেলায় ভ্রমণ সম্পন্ন (${toBn(percentage)}%)! পদবী: ${rank.title}`,
       images: [finalImageUrl],
     },
   };
