@@ -57,8 +57,8 @@ export default function BattleResultCard({
     winnerSub = `${toBn(myCount - challengerCount)}টি জেলায় এগিয়ে থেকে এই যুদ্ধে বিজয়ী হয়েছেন!`;
   } else if (challengerCount > myCount) {
     winner = "challenger";
-    winnerTitle = `${challengerName} বিজয়ী!`;
-    winnerSub = `${toBn(challengerCount - myCount)}টি জেলায় এগিয়ে থেকে টেক্কা দিয়েছেন!`;
+    winnerTitle = `অভিনন্দন ${challengerName}!`;
+    winnerSub = `${toBn(challengerCount - myCount)}টি জেলায় এগিয়ে থেকে এই যুদ্ধে বিজয়ী হয়েছেন!`;
   }
 
   const todayDate = new Date().toLocaleDateString("bn-BD", {
@@ -71,106 +71,107 @@ export default function BattleResultCard({
     <div
       ref={cardRef}
       data-battle-card="true"
-      style={{ width: "460px", maxWidth: "460px" }}
-      className="bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 text-white rounded-3xl p-5 border-2 border-amber-500/70 shadow-2xl relative select-none box-border shrink-0"
+      style={{ width: "500px", minWidth: "500px", maxWidth: "500px" }}
+      className="bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 text-white rounded-3xl p-5 sm:p-6 border-2 border-amber-500/70 shadow-2xl relative select-none box-border shrink-0"
     >
       {/* Decorative Corner Ambient Glows */}
-      <div className="absolute top-0 right-0 w-36 h-36 bg-amber-500/15 rounded-full blur-2xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-36 h-36 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/15 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-40 h-40 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none" />
 
-      {/* 1. Header */}
-      <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-amber-500/30 relative z-10">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
-            <Swords className="w-4 h-4" />
+      {/* 1. Header (Clean, spacious, no wrapping/overwriting) */}
+      <div className="flex items-center justify-between pb-4 mb-4 border-b border-amber-500/30 relative z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+            <Swords className="w-5 h-5" />
           </div>
-          <div>
-            <span className="text-[10px] uppercase tracking-wider text-amber-400 font-extrabold block leading-normal">
+          <div className="flex flex-col justify-center">
+            <span className="text-[11px] uppercase tracking-wider text-amber-400 font-extrabold leading-tight whitespace-nowrap">
               ১v১ বন্ধু ভ্রমণ যুদ্ধ সনদ
             </span>
-            <h3 className="text-sm font-black text-white leading-normal">
+            <h3 className="text-base font-black text-white leading-tight mt-1 whitespace-nowrap">
               যাযাবর মিটার ২০২৬
             </h3>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[11px] text-slate-300 font-medium bg-slate-900/95 px-3 py-1 rounded-xl border border-slate-800 shrink-0">
-          <Calendar className="w-3.5 h-3.5 text-amber-400" />
-          <span>{todayDate}</span>
+        {/* Calendar Badge */}
+        <div className="flex items-center gap-1.5 text-xs text-slate-300 font-medium bg-slate-900/95 px-3.5 py-2 rounded-xl border border-slate-800 shrink-0 whitespace-nowrap">
+          <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <span className="whitespace-nowrap">{todayDate}</span>
         </div>
       </div>
 
-      {/* 2. Duel Scoreboard (VS Arena) - Robust 3-Column Flexbox */}
-      <div className="bg-slate-900/95 border border-slate-800 rounded-2xl p-4 mb-3.5 relative z-10">
+      {/* 2. Duel Scoreboard (VS Arena) - Solid 3-Column Flexbox */}
+      <div className="bg-slate-900/95 border border-slate-800 rounded-2xl p-4 sm:p-5 mb-4 relative z-10">
         <div className="flex items-center justify-between gap-3">
           {/* Player 1: Me */}
           <div className="flex-1 flex flex-col items-center text-center min-w-0">
-            <div className="relative mb-2">
+            <div className="relative mb-2.5">
               <UserAvatar
                 avatarUrl={myProfile.avatarUrl}
                 name={myProfile.name}
-                size={54}
+                size={58}
                 className={winner === "me" ? "ring-2 ring-emerald-400" : "ring-1 ring-slate-700"}
               />
               {winner === "me" && (
                 <div className="absolute -top-1.5 -right-1 p-1 rounded-full bg-emerald-500 text-slate-950 shadow-md">
-                  <Trophy className="w-3 h-3" />
+                  <Trophy className="w-3.5 h-3.5" />
                 </div>
               )}
             </div>
 
-            <h4 className="text-xs sm:text-sm font-black text-white break-words leading-normal w-full px-1">
+            <h4 className="text-sm font-black text-white break-words leading-snug w-full px-1">
               {myProfile.name}
             </h4>
-            <span className="text-[11px] text-emerald-400 font-bold block mt-0.5 leading-normal px-1">
+            <span className="text-xs text-emerald-400 font-bold block mt-1 leading-snug px-1">
               {myRank.title}
             </span>
 
-            <div className="mt-2.5 w-full py-2 px-1 bg-slate-950/80 rounded-xl border border-slate-800">
-              <span className="text-2xl font-black text-emerald-400 block leading-normal">
+            <div className="mt-3 w-full py-2.5 px-2 bg-slate-950/80 rounded-xl border border-slate-800">
+              <span className="text-2xl font-black text-emerald-400 block leading-tight">
                 {toBn(myCount)}
               </span>
-              <span className="text-[10px] text-slate-400 block font-medium leading-normal mt-0.5">
+              <span className="text-[11px] text-slate-400 block font-medium leading-tight mt-1 whitespace-nowrap">
                 জেলা ({toBn(myPercent)}%)
               </span>
             </div>
           </div>
 
-          {/* Center Column: VS Badge (Zero transform or absolute positioning) */}
-          <div className="w-12 shrink-0 flex flex-col items-center justify-center">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-red-600 border-2 border-slate-900 flex items-center justify-center shadow-lg shadow-amber-950/60">
+          {/* Center Column: VS Badge */}
+          <div className="w-14 shrink-0 flex flex-col items-center justify-center">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-red-600 border-2 border-slate-900 flex items-center justify-center shadow-lg shadow-amber-950/60">
               <span className="text-xs font-black text-slate-950 tracking-wider">VS</span>
             </div>
           </div>
 
           {/* Player 2: Challenger */}
           <div className="flex-1 flex flex-col items-center text-center min-w-0">
-            <div className="relative mb-2">
+            <div className="relative mb-2.5">
               <UserAvatar
                 avatarUrl={null}
                 name={challengerName}
-                size={54}
+                size={58}
                 className={winner === "challenger" ? "ring-2 ring-amber-400" : "ring-1 ring-slate-700"}
               />
               {winner === "challenger" && (
                 <div className="absolute -top-1.5 -right-1 p-1 rounded-full bg-amber-500 text-slate-950 shadow-md">
-                  <Trophy className="w-3 h-3" />
+                  <Trophy className="w-3.5 h-3.5" />
                 </div>
               )}
             </div>
 
-            <h4 className="text-xs sm:text-sm font-black text-white break-words leading-normal w-full px-1">
+            <h4 className="text-sm font-black text-white break-words leading-snug w-full px-1">
               {challengerName}
             </h4>
-            <span className="text-[11px] text-amber-400 font-bold block mt-0.5 leading-normal px-1">
+            <span className="text-xs text-amber-400 font-bold block mt-1 leading-snug px-1">
               {challengerRank.title}
             </span>
 
-            <div className="mt-2.5 w-full py-2 px-1 bg-slate-950/80 rounded-xl border border-slate-800">
-              <span className="text-2xl font-black text-amber-400 block leading-normal">
+            <div className="mt-3 w-full py-2.5 px-2 bg-slate-950/80 rounded-xl border border-slate-800">
+              <span className="text-2xl font-black text-amber-400 block leading-tight">
                 {toBn(challengerCount)}
               </span>
-              <span className="text-[10px] text-slate-400 block font-medium leading-normal mt-0.5">
+              <span className="text-[11px] text-slate-400 block font-medium leading-tight mt-1 whitespace-nowrap">
                 জেলা ({toBn(challengerPercent)}%)
               </span>
             </div>
@@ -178,46 +179,46 @@ export default function BattleResultCard({
         </div>
       </div>
 
-      {/* 3. Winner Callout Banner */}
-      <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-500/15 via-slate-900 to-amber-500/15 border border-amber-500/40 text-center mb-3.5 relative z-10">
-        <div className="inline-flex items-center justify-center gap-1.5 text-xs font-black text-amber-300 leading-normal">
-          <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span>{winnerTitle}</span>
+      {/* 3. Winner Callout Banner (Flex column - Zero text collision) */}
+      <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-slate-900 to-amber-500/15 border border-amber-500/40 flex flex-col items-center justify-center text-center gap-1.5 mb-4 relative z-10">
+        <div className="flex items-center justify-center gap-2 text-sm font-black text-amber-300 leading-snug">
+          <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+          <span className="break-words">{winnerTitle}</span>
         </div>
-        <p className="text-[11px] text-slate-200 mt-1 leading-normal font-medium">
+        <p className="text-xs text-slate-200 leading-snug font-medium break-words">
           {winnerSub}
         </p>
       </div>
 
-      {/* 4. Battle Stats Highlights - Balanced 2-Row Layout */}
-      <div className="space-y-2 mb-3.5 relative z-10">
+      {/* 4. Battle Stats Highlights */}
+      <div className="space-y-2.5 mb-4 relative z-10">
         {/* Row 1: Common Districts */}
-        <div className="px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs">
-          <span className="text-slate-300 flex items-center gap-1.5 font-medium leading-normal">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+        <div className="px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs">
+          <span className="text-slate-300 flex items-center gap-2 font-medium whitespace-nowrap">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             উভয়ের কমন জেলাসমূহ:
           </span>
-          <span className="font-black text-emerald-300 leading-normal">
+          <span className="font-black text-emerald-300 whitespace-nowrap text-xs sm:text-sm">
             {toBn(commonCount)}টি জেলা
           </span>
         </div>
 
         {/* Row 2: Exclusive Districts for each player */}
-        <div className="grid grid-cols-2 gap-2.5">
-          <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
-            <span className="text-[10px] text-slate-400 block font-medium leading-normal break-words">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-center flex flex-col items-center justify-center">
+            <span className="text-[11px] text-slate-400 block font-medium leading-tight break-words">
               শুধু {myProfile.name}
             </span>
-            <strong className="text-xs sm:text-sm font-black text-teal-300 mt-0.5 block leading-normal">
+            <strong className="text-sm font-black text-teal-300 mt-1 block leading-tight whitespace-nowrap">
               {toBn(myOnlyCount)}টি জেলা
             </strong>
           </div>
 
-          <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
-            <span className="text-[10px] text-slate-400 block font-medium leading-normal break-words">
+          <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-center flex flex-col items-center justify-center">
+            <span className="text-[11px] text-slate-400 block font-medium leading-tight break-words">
               শুধু {challengerName}
             </span>
-            <strong className="text-xs sm:text-sm font-black text-amber-300 mt-0.5 block leading-normal">
+            <strong className="text-sm font-black text-amber-300 mt-1 block leading-tight whitespace-nowrap">
               {toBn(challengerOnlyCount)}টি জেলা
             </strong>
           </div>
@@ -225,12 +226,12 @@ export default function BattleResultCard({
       </div>
 
       {/* 5. Footer Watermark */}
-      <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400 relative z-10">
-        <div className="flex items-center gap-1.5 font-semibold text-slate-300 leading-normal">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+      <div className="pt-3.5 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 relative z-10">
+        <div className="flex items-center gap-2 font-semibold text-slate-300 whitespace-nowrap">
+          <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>যাযাবর মিটার অথেনটিক ১v১ ফলাফল সনদ</span>
         </div>
-        <span className="font-bold text-amber-300 leading-normal">
+        <span className="font-bold text-amber-300 whitespace-nowrap">
           jajabor.mdrasel.site
         </span>
       </div>
