@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import { UserProfile, TitleRank, SpecialBadge } from "@/types";
 import CertificateCard from "./CertificateCard";
 import { useShareCard } from "@/hooks/useShareCard";
+import { encodeCompareData, getBaseUrl } from "@/utils/urlEncoder";
 import { 
   Download, 
   Share2, 
@@ -82,6 +83,9 @@ export default function ShareModal({
     }
   };
 
+  const compareQuery = encodeCompareData(userProfile.name, selectedDistrictIds);
+  const liveCompareLink = `${getBaseUrl()}/compare?${compareQuery}`;
+
   const handleWhatsAppShare = () => {
     const encoded = encodeURIComponent(shareText);
     window.open(`https://wa.me/?text=${encoded}`, "_blank");
@@ -89,7 +93,6 @@ export default function ShareModal({
 
   const handleFacebookShare = () => {
     copyShareText(shareText);
-    const liveCompareLink = `http://jajabor.mdrasel.site/compare`;
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(liveCompareLink)}&quote=${encodeURIComponent(shareText)}`,
       "_blank"
@@ -97,7 +100,6 @@ export default function ShareModal({
   };
 
   const handleTelegramShare = () => {
-    const liveCompareLink = `http://jajabor.mdrasel.site/compare`;
     window.open(
       `https://t.me/share/url?url=${encodeURIComponent(liveCompareLink)}&text=${encodeURIComponent(shareText)}`,
       "_blank"

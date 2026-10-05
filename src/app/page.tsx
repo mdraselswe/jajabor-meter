@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BangladeshMap from "@/components/map/BangladeshMap";
 import { District, DISTRICTS } from "@/data/districts";
 import { useJajaborStore } from "@/hooks/useJajaborStore";
@@ -33,7 +33,9 @@ import {
   Waves,
   Share2,
   Smile,
-  Swords
+  Swords,
+  ArrowRight,
+  X
 } from "lucide-react";
 import Link from "next/link";
 
@@ -70,6 +72,31 @@ export default function Home() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [activeQuizDistrict, setActiveQuizDistrict] = useState<District | null>(null);
+  const [activeChallenger, setActiveChallenger] = useState<{ name: string; districtIds: string[] } | null>(null);
+
+  // Load active challenger if present in storage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("jajabor_active_challenger_v1");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed.name === "string" && Array.isArray(parsed.districtIds)) {
+          setActiveChallenger(parsed);
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  const handleDismissChallenger = () => {
+    try {
+      localStorage.removeItem("jajabor_active_challenger_v1");
+    } catch (e) {
+      // ignore
+    }
+    setActiveChallenger(null);
+  };
 
   // Score & Ranking
   const selectedCount = selectedDistrictIds.length;
@@ -181,6 +208,47 @@ export default function Home() {
           ম্যাপে ক্লিক করে জেলা সিলেক্ট করুন অথবা জেলা তালিকা ব্যবহার করুন। ফাঁপর ডিটেক্টরে সত্যি উত্তর দিন এবং নিজের সনদপত্র ডাউনলোড করুন!
         </p>
       </section>
+
+      {/* Active Battle Alert Banner (If user has an active challenger) */}
+      {activeChallenger && (
+        <section className="mb-6 p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-950/60 via-slate-900 to-amber-950/40 border border-amber-500/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl animate-in fade-in duration-300">
+          <div className="flex items-center gap-3.5 w-full sm:w-auto">
+            <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/40 shrink-0">
+              <Swords className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                  চলমান ১v১ ভ্রমণ যুদ্ধ
+                </span>
+              </div>
+              <h4 className="text-sm sm:text-base font-black text-white mt-0.5">
+                <span className="text-amber-400">{activeChallenger.name}</span>-এর সাথে আপনার টেক্কা চলছে!
+              </h4>
+              <p className="text-xs text-slate-300 mt-0.5">
+                উনি ঘুরেছেন {toBn(activeChallenger.districtIds.length)} জেলা | আপনি ঘুরেছেন {toBn(selectedCount)} জেলা
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+            <Link
+              href="/compare"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-950/40 transition active:scale-95 cursor-pointer"
+            >
+              <span>লড়াই ও স্কোর তুলনা দেখুন</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <button
+              onClick={handleDismissChallenger}
+              title="চ্যালেঞ্জ বন্ধ করুন"
+              className="p-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* Main 2-Column Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

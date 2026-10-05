@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { toPng } from "html-to-image";
 import { UserProfile, TitleRank } from "@/types";
-import { encodeCompareData } from "@/utils/urlEncoder";
+import { encodeCompareData, getBaseUrl } from "@/utils/urlEncoder";
 import { toBn } from "@/utils/bengaliDigits";
 
 const TRANSPARENT_PIXEL =
@@ -114,7 +114,7 @@ export function useShareCard() {
   const getShareableText = useCallback(
     (userProfile: UserProfile, districtCount: number, rank: TitleRank, districtIds: string[]) => {
       const compareQuery = encodeCompareData(userProfile.name, districtIds);
-      const liveLink = `http://jajabor.mdrasel.site/compare?${compareQuery}`;
+      const liveLink = `${getBaseUrl()}/compare?${compareQuery}`;
 
       return `যাযাবর মিটার ফলাফল!\nআমি (${userProfile.name}) বাংলাদেশের ${toBn(districtCount)}টি জেলায় ভ্রমণ করে "${rank.title}" পদবী পেয়েছি!\n\nরিভিউ: "${rank.roast}"\n\nআমার সাথে টেক্কা দেওয়ার সাহস আছে? নিচের লিংকে ঢুকে তোমার যাযাবর মিটার মাপো:\n👉 ${liveLink}\n\n#JajaborMeter #যাযাবরমিটার`;
     },
