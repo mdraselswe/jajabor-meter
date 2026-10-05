@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { UserProfile } from "@/types";
 
+const FIREBASE_CONFIG = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyBmNtg4L3TJgMe1PktfQqPWuVTH_vN9_Rg",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "jajabor-meter.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "jajabor-meter",
+};
+
 export function useAuth(
   onProfileUpdate: (profile: Partial<UserProfile>) => void,
   onOpenProfileModal?: () => void
@@ -15,33 +21,10 @@ export function useAuth(
     try {
       setIsLoading(true);
 
-      const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.trim();
-
-      // If Firebase credentials are not yet added or are empty/placeholder
-      if (!apiKey || apiKey === "your_api_key_here" || apiKey.includes("AIzaSyBmNtg4L3TJgMe1PktfQqPWuVTH")) {
-        if (onOpenProfileModal) {
-          onOpenProfileModal();
-        } else {
-          onProfileUpdate({
-            name: "গুগল যাযাবর",
-            avatarUrl: null,
-            isLoggedIn: true,
-          });
-        }
-        return;
-      }
-
-      // If Firebase credentials exist, run live Google Sign-in
       const { initializeApp, getApps } = await import("firebase/app");
       const { getAuth, signInWithPopup, GoogleAuthProvider } = await import("firebase/auth");
 
-      const firebaseConfig = {
-        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      };
-
-      const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+      const app = getApps().length === 0 ? initializeApp(FIREBASE_CONFIG) : getApps()[0];
       const auth = getAuth(app);
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
@@ -58,20 +41,37 @@ export function useAuth(
       }
     } catch (error: any) {
       console.error("Google sign-in error:", error);
-      // If user closed the popup deliberately, don't show any error
-      if (error?.code === "auth/popup-closed-by-user" || error?.code === "auth/cancelled-popup-request") {
+
+      // User closed popup deliberately
+      if (
+        error?.code === "auth/popup-closed-by-user" ||
+        error?.code === "auth/cancelled-popup-request"
+      ) {
         return;
       }
 
-      // If domain unauthorized or credentials invalid, open profile customizer modal so user is not blocked
+      if (error?.code === "auth/unauthorized-domain") {
+        alert(
+          "ডোমেইন পারমিশন প্রয়োজন!\nFirebase Console -> Authentication -> Settings -> Authorized domains-এ 'jajabor.mdrasel.site' যোগ করতে হবে।"
+        );
+        return;
+      }
+
+      if (error?.code === "auth/operation-not-allowed") {
+        alert(
+          "গুগল প্রোভাইডার চালু নেই!\nFirebase Console -> Authentication -> Sign-in method-এ গিয়ে 'Google' এনাবল করুন।"
+        );
+        return;
+      }
+
+      if (error?.code === "auth/popup-blocked") {
+        alert("ব্রাউজারে পপ-আপ ব্লক করা আছে। ব্রাউজার সেটিংসে পপ-আপ অ্যালাউ করে আবার চেষ্টা করুন।");
+        return;
+      }
+
+      alert(`গুগল লগইনে সমস্যা হয়েছে (${error?.code || error?.message || "অজানা সমস্যা"})। আপনি সরাসরি নাম ও ছবি আপলোড করে এগিয়ে যেতে পারেন।`);
       if (onOpenProfileModal) {
         onOpenProfileModal();
-      } else {
-        onProfileUpdate({
-          name: "যাচাইকৃত যাযাবর",
-          avatarUrl: null,
-          isLoggedIn: true,
-        });
       }
     } finally {
       setIsLoading(false);
