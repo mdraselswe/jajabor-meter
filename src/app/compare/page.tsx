@@ -10,6 +10,7 @@ import { DISTRICTS } from "@/data/districts";
 import { toBn } from "@/utils/bengaliDigits";
 import CompareSkeleton from "@/components/skeletons/CompareSkeleton";
 import UserAvatar from "@/components/auth/UserAvatar";
+import BattleShareModal from "@/components/share/BattleShareModal";
 import { 
   Swords, 
   Trophy, 
@@ -25,7 +26,8 @@ import {
   Send,
   ArrowRight,
   Flame,
-  Link2
+  Link2,
+  Download
 } from "lucide-react";
 
 interface ChallengerData {
@@ -44,6 +46,7 @@ function CompareContent() {
   const [pasteLinkInput, setPasteLinkInput] = useState("");
   const [copyDone, setCopyDone] = useState(false);
   const [pasteError, setPasteError] = useState("");
+  const [isBattleShareModalOpen, setIsBattleShareModalOpen] = useState(false);
 
   // 1. Resolve challenger from URL parameters or persistent storage
   useEffect(() => {
@@ -242,10 +245,20 @@ function CompareContent() {
               কার যাযাবর মিটার কতটুকু আর কে আন্তর্জাতিক ফাঁপরবাজ? নিচে লাইভ তুলনা দেখুন!
             </p>
 
-            {/* Winner Banner */}
-            <div className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-900 border border-amber-500/60 text-amber-300 text-xs sm:text-sm font-extrabold shadow-xl">
-              <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>{battleStatus}</span>
+            {/* Winner Banner & Quick Card Trigger */}
+            <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-900 border border-amber-500/60 text-amber-300 text-xs sm:text-sm font-extrabold shadow-xl">
+                <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>{battleStatus}</span>
+              </div>
+
+              <button
+                onClick={() => setIsBattleShareModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 hover:text-white font-bold text-xs transition active:scale-95 cursor-pointer shadow-md"
+              >
+                <Download className="w-4 h-4 text-amber-400" />
+                <span>ফলাফল ইমেজ ও সনদ</span>
+              </button>
             </div>
           </section>
 
@@ -403,6 +416,16 @@ function CompareContent() {
 
           {/* Action Footer for Active Battle */}
           <div className="flex flex-col items-center justify-center gap-4 text-center">
+            {/* Big Primary Action: Battle Result Card & Download */}
+            <button
+              onClick={() => setIsBattleShareModalOpen(true)}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-sm sm:text-base shadow-xl shadow-amber-950/50 transition-all duration-150 active:scale-95 cursor-pointer"
+            >
+              <Trophy className="w-5 h-5 text-slate-950" />
+              <span>১v১ যুদ্ধের ফলাফল কার্ড ও ছবি ডাউনলোড</span>
+              <Share2 className="w-4 h-4 text-slate-950" />
+            </button>
+
             <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-3">
               <button
                 onClick={handleCopyMyChallenge}
@@ -617,6 +640,18 @@ function CompareContent() {
             </Link>
           </div>
         </div>
+      )}
+
+      {/* 1v1 Battle Result Share & Download Modal */}
+      {hasChallenger && activeChallenger && (
+        <BattleShareModal
+          isOpen={isBattleShareModalOpen}
+          onClose={() => setIsBattleShareModalOpen(false)}
+          myProfile={myProfile}
+          myDistrictIds={myDistrictIds}
+          challengerName={activeChallenger.name}
+          challengerDistrictIds={activeChallenger.districtIds}
+        />
       )}
     </main>
   );
