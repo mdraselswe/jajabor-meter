@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 interface BattleResultCardProps {
-  cardRef: React.RefObject<HTMLDivElement>;
+  cardRef?: React.RefObject<HTMLDivElement>;
   myProfile: UserProfile;
   myDistrictIds: string[];
   challengerName: string;
@@ -72,9 +72,9 @@ export default function BattleResultCard({
       ref={cardRef}
       data-battle-card="true"
       style={{
-        fontFamily: "var(--font-noto-bengali), 'Noto Sans Bengali', 'Hind Siliguri', 'Nirmala UI', 'Kohinoor Bangla', system-ui, -apple-system, sans-serif",
+        fontFamily: "var(--font-noto-bengali), 'Noto Sans Bengali', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       }}
-      className="w-full max-w-[560px] mx-auto bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 text-white rounded-3xl p-4 sm:p-6 border-2 border-amber-500/70 shadow-2xl relative select-none box-border"
+      className="w-[580px] max-w-full mx-auto bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 text-white rounded-3xl p-5 sm:p-6 border-2 border-amber-500/70 shadow-2xl relative select-none box-border"
     >
       {/* Decorative Corner Ambient Glows */}
       <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />

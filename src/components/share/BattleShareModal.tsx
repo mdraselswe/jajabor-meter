@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { UserProfile } from "@/types";
 import BattleResultCard from "./BattleResultCard";
 import { useShareCard } from "@/hooks/useShareCard";
@@ -13,7 +13,7 @@ import {
   Check, 
   X, 
   MessageCircle, 
-  Send,
+  Send, 
   Loader2,
   Swords
 } from "lucide-react";
@@ -35,7 +35,13 @@ export default function BattleShareModal({
   challengerName,
   challengerDistrictIds,
 }: BattleShareModalProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
+  // Dedicated pristine export ref (ALWAYS fixed 580px, immune to mobile screen squishing)
+  const exportCardRef = useRef<HTMLDivElement>(null);
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+  const previewInnerRef = useRef<HTMLDivElement>(null);
+  const [previewScale, setPreviewScale] = useState(1);
+  const [cardHeight, setCardHeight] = useState<number | null>(null);
+
   const [isDownloading, setIsDownloading] = useState(false);
 
   const {
@@ -45,6 +51,34 @@ export default function BattleShareModal({
     copyShareText,
     shareNative,
   } = useShareCard();
+
+  // Smooth responsive scaling for the in-modal preview on smaller screens
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const updateScale = () => {
+      if (previewContainerRef.current) {
+        const availableWidth = previewContainerRef.current.offsetWidth;
+        const targetWidth = 580;
+        if (availableWidth < targetWidth && availableWidth > 0) {
+          setPreviewScale(availableWidth / targetWidth);
+        } else {
+          setPreviewScale(1);
+        }
+      }
+      if (previewInnerRef.current) {
+        setCardHeight(previewInnerRef.current.offsetHeight);
+      }
+    };
+
+    updateScale();
+    const timer = setTimeout(updateScale, 80);
+    window.addEventListener("resize", updateScale);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateScale);
+    };
+  }, [isOpen, myDistrictIds, challengerDistrictIds, myProfile, challengerName]);
 
   if (!isOpen) return null;
 
@@ -70,7 +104,9 @@ export default function BattleShareModal({
     if (isDownloading || isExporting) return;
     try {
       setIsDownloading(true);
-      await downloadImage(cardRef.current, fileName);
+      const targetElement = exportCardRef.current;
+      if (!targetElement) return;
+      await downloadImage(targetElement, fileName);
     } catch (e) {
       console.error("Download caught error:", e);
     } finally {
@@ -80,7 +116,9 @@ export default function BattleShareModal({
 
   const handleNativeShare = async () => {
     try {
-      await shareNative(cardRef.current, shareText, "১v১ ভ্রমণ যুদ্ধ ফলাফল", `${safeMyName}-vs-${safeChallengerName}`);
+      const targetElement = exportCardRef.current;
+      if (!targetElement) return;
+      await shareNative(targetElement, shareText, "১v১ ভ্রমণ যুদ্ধ ফলাফল", `${safeMyName}-vs-${safeChallengerName}`);
     } catch (e) {
       console.error("Native share caught error:", e);
     }
@@ -108,6 +146,31 @@ export default function BattleShareModal({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md p-3 sm:p-6 animate-in fade-in duration-200">
+      {/* Offscreen Fixed-Width Pristine Export Element (Always 580px, zero line wrap or padding break) */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          left: "-9999px",
+          top: "-9999px",
+          width: "580px",
+          minWidth: "580px",
+          maxWidth: "580px",
+          pointerEvents: "none",
+          zIndex: -999,
+          opacity: 1,
+          visibility: "visible",
+        }}
+      >
+        <BattleResultCard
+          cardRef={exportCardRef}
+          myProfile={myProfile}
+          myDistrictIds={myDistrictIds}
+          challengerName={challengerName}
+          challengerDistrictIds={challengerDistrictIds}
+        />
+      </div>
+
       <div className="min-h-full flex items-center justify-center py-6 sm:py-10">
         <div className="relative max-w-2xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-4 sm:p-6 shadow-2xl my-auto animate-in zoom-in-95 duration-200">
           {/* Modal Header */}
@@ -133,15 +196,26 @@ export default function BattleShareModal({
             </button>
           </div>
 
-          {/* Result Card Preview (What you see is exactly what downloads) */}
-          <div className="flex justify-center mb-5 w-full">
-            <BattleResultCard
-              cardRef={cardRef}
-              myProfile={myProfile}
-              myDistrictIds={myDistrictIds}
-              challengerName={challengerName}
-              challengerDistrictIds={challengerDistrictIds}
-            />
+          {/* Result Card Preview: Scaled smoothly so mobile preview never wraps or squishes */}
+          <div ref={previewContainerRef} className="w-full flex justify-center mb-5 overflow-hidden">
+            <div
+              style={{
+                width: "580px",
+                transform: `scale(${previewScale})`,
+                transformOrigin: "top center",
+                height: cardHeight ? `${cardHeight * previewScale}px` : "auto",
+                transition: "transform 0.15s ease-out",
+              }}
+            >
+              <div ref={previewInnerRef}>
+                <BattleResultCard
+                  myProfile={myProfile}
+                  myDistrictIds={myDistrictIds}
+                  challengerName={challengerName}
+                  challengerDistrictIds={challengerDistrictIds}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Primary Action Buttons */}

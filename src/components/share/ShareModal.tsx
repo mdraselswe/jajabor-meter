@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { UserProfile, TitleRank, SpecialBadge } from "@/types";
 import CertificateCard from "./CertificateCard";
 import { useShareCard } from "@/hooks/useShareCard";
@@ -41,7 +41,13 @@ export default function ShareModal({
   unlockedBadges,
   onOpenEditProfile,
 }: ShareModalProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
+  // Dedicated pristine export ref (ALWAYS fixed 580px, immune to mobile screen squishing)
+  const exportCardRef = useRef<HTMLDivElement>(null);
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+  const previewInnerRef = useRef<HTMLDivElement>(null);
+  const [previewScale, setPreviewScale] = useState(1);
+  const [cardHeight, setCardHeight] = useState<number | null>(null);
+
   const [isDownloading, setIsDownloading] = useState(false);
   const {
     isExporting,
@@ -51,6 +57,34 @@ export default function ShareModal({
     copyShareText,
     shareNative,
   } = useShareCard();
+
+  // Smooth responsive scaling for the in-modal preview on smaller screens
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const updateScale = () => {
+      if (previewContainerRef.current) {
+        const availableWidth = previewContainerRef.current.offsetWidth;
+        const targetWidth = 580;
+        if (availableWidth < targetWidth && availableWidth > 0) {
+          setPreviewScale(availableWidth / targetWidth);
+        } else {
+          setPreviewScale(1);
+        }
+      }
+      if (previewInnerRef.current) {
+        setCardHeight(previewInnerRef.current.offsetHeight);
+      }
+    };
+
+    updateScale();
+    const timer = setTimeout(updateScale, 80);
+    window.addEventListener("resize", updateScale);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateScale);
+    };
+  }, [isOpen, selectedDistrictIds, selectedMemoryIds, userProfile, rank]);
 
   if (!isOpen) return null;
 
@@ -66,8 +100,10 @@ export default function ShareModal({
     if (isDownloading || isExporting) return;
     try {
       setIsDownloading(true);
+      const targetElement = exportCardRef.current;
+      if (!targetElement) return;
       const safeName = (userProfile.name || "jajabor").trim().replace(/[\s/\\?%*:|"<>]+/g, "-");
-      await downloadImage(cardRef.current, `${safeName}-jajabor-certificate.png`);
+      await downloadImage(targetElement, `${safeName}-jajabor-certificate.png`);
     } catch (e) {
       console.error("Certificate download caught error:", e);
     } finally {
@@ -77,8 +113,10 @@ export default function ShareModal({
 
   const handleNativeShare = async () => {
     try {
+      const targetElement = exportCardRef.current;
+      if (!targetElement) return;
       const safeName = (userProfile.name || "jajabor").trim().replace(/[\s/\\?%*:|"<>]+/g, "-");
-      await shareNative(cardRef.current, shareText, "যাযাবর মিটার সনদপত্র", safeName);
+      await shareNative(targetElement, shareText, "যাযাবর মিটার সনদপত্র", safeName);
     } catch (e) {
       console.error("Native share caught error:", e);
     }
@@ -109,6 +147,33 @@ export default function ShareModal({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md p-3 sm:p-6 animate-in fade-in duration-200">
+      {/* Offscreen Fixed-Width Pristine Export Element (Always 580px, zero line wrap or padding break) */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          left: "-9999px",
+          top: "-9999px",
+          width: "580px",
+          minWidth: "580px",
+          maxWidth: "580px",
+          pointerEvents: "none",
+          zIndex: -999,
+          opacity: 1,
+          visibility: "visible",
+        }}
+      >
+        <CertificateCard
+          cardRef={exportCardRef}
+          userProfile={userProfile}
+          selectedDistrictIds={selectedDistrictIds}
+          selectedMemoryIds={selectedMemoryIds}
+          rank={rank}
+          percentage={percentage}
+          unlockedBadges={unlockedBadges}
+        />
+      </div>
+
       <div className="min-h-full flex items-center justify-center py-6 sm:py-10">
         <div className="relative max-w-2xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-4 sm:p-6 shadow-2xl my-auto animate-in zoom-in-95 duration-200">
         {/* Modal Header */}
@@ -129,17 +194,28 @@ export default function ShareModal({
           </button>
         </div>
 
-        {/* Certificate Preview Card */}
-        <div className="flex justify-center mb-4 overflow-visible">
-          <CertificateCard
-            cardRef={cardRef}
-            userProfile={userProfile}
-            selectedDistrictIds={selectedDistrictIds}
-            selectedMemoryIds={selectedMemoryIds}
-            rank={rank}
-            percentage={percentage}
-            unlockedBadges={unlockedBadges}
-          />
+        {/* Certificate Preview Card: Scaled smoothly so mobile preview never wraps or squishes */}
+        <div ref={previewContainerRef} className="w-full flex justify-center mb-4 overflow-hidden">
+          <div
+            style={{
+              width: "580px",
+              transform: `scale(${previewScale})`,
+              transformOrigin: "top center",
+              height: cardHeight ? `${cardHeight * previewScale}px` : "auto",
+              transition: "transform 0.15s ease-out",
+            }}
+          >
+            <div ref={previewInnerRef}>
+              <CertificateCard
+                userProfile={userProfile}
+                selectedDistrictIds={selectedDistrictIds}
+                selectedMemoryIds={selectedMemoryIds}
+                rank={rank}
+                percentage={percentage}
+                unlockedBadges={unlockedBadges}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Quick Edit Name/Photo Trigger */}

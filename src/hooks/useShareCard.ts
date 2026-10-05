@@ -14,12 +14,73 @@ import {
 const TRANSPARENT_PIXEL =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAEDEB/0wAAAABJRU5ErkJggg==";
 
+async function inlineCardImages(container: HTMLElement): Promise<() => void> {
+  if (typeof window === "undefined") return () => {};
+  const images = Array.from(container.querySelectorAll("img"));
+  const cleanups: Array<() => void> = [];
+
+  await Promise.all(
+    images.map(async (img) => {
+      const originalSrc = img.src;
+      if (!originalSrc || originalSrc.startsWith("data:")) return;
+
+      cleanups.push(() => {
+        try {
+          img.src = originalSrc;
+        } catch {
+          // ignore
+        }
+      });
+
+      // 1. Try fetching with CORS
+      try {
+        const response = await fetch(originalSrc, { mode: "cors", cache: "force-cache" });
+        if (response.ok) {
+          const blob = await response.blob();
+          const dataUrl = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+          img.src = dataUrl;
+          return;
+        }
+      } catch {
+        // Direct fetch failed
+      }
+
+      // 2. Try drawing onto an in-memory canvas if image is already loaded in DOM
+      try {
+        if (img.complete && img.naturalWidth > 0) {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.naturalWidth || 96;
+          canvas.height = img.naturalHeight || 96;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL("image/png");
+            img.src = dataUrl;
+            return;
+          }
+        }
+      } catch {
+        // Canvas tainted
+      }
+    })
+  );
+
+  return () => {
+    cleanups.forEach((fn) => fn());
+  };
+}
+
 export function useShareCard() {
   const [isExporting, setIsExporting] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
   const generateCardPng = async (cardElement: HTMLElement): Promise<string> => {
-    // 1. Ensure all custom Bengali fonts are fully loaded before capturing
+    // 1. Ensure all custom fonts are ready before capturing
     if (typeof document !== "undefined" && document.fonts) {
       try {
         await document.fonts.ready;
@@ -28,7 +89,10 @@ export function useShareCard() {
       }
     }
 
-    // Strategy 1: html-to-image with decode safeguard (Native SVG foreignObject rendering with perfect Bengali ligatures & alignment)
+    // 2. Pre-inline external images so html-to-image never triggers CORS/fetch errors
+    const restoreImages = await inlineCardImages(cardElement);
+
+    // Strategy 1: html-to-image (Native SVG foreignObject rendering with perfect Bengali ligatures & alignment)
     try {
       let originalDecode: typeof HTMLImageElement.prototype.decode | null = null;
       if (typeof window !== "undefined" && HTMLImageElement.prototype.decode) {
@@ -43,7 +107,7 @@ export function useShareCard() {
       const { toPng } = await import("html-to-image");
       const dataUrl = await toPng(cardElement, {
         cacheBust: true,
-        skipFonts: true,
+        skipFonts: false,
         pixelRatio: 2,
         imagePlaceholder: TRANSPARENT_PIXEL,
         style: {
@@ -61,9 +125,11 @@ export function useShareCard() {
       }
     } catch (h2iError) {
       console.warn("html-to-image issue, falling back to html2canvas:", h2iError);
+    } finally {
+      restoreImages();
     }
 
-    // Strategy 2: html2canvas fallback with exact element dimension and zero scroll offset
+    // Strategy 2: html2canvas fallback
     try {
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(cardElement, {
