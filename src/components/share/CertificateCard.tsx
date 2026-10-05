@@ -58,41 +58,41 @@ export default function CertificateCard({
       style={{
         fontFamily: "var(--font-noto-bengali), 'Noto Sans Bengali', 'Hind Siliguri', 'Nirmala UI', 'Kohinoor Bangla', system-ui, -apple-system, sans-serif",
       }}
-      className="w-full max-w-[440px] sm:max-w-[460px] bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-white rounded-3xl p-4 sm:p-5 border-2 border-emerald-500/60 shadow-2xl relative select-none box-border overflow-hidden"
+      className="w-full max-w-[560px] mx-auto bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-white rounded-3xl p-4 sm:p-6 border-2 border-emerald-500/60 shadow-2xl relative select-none box-border"
     >
       {/* Decorative Golden Corner Glows */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-36 h-36 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-44 h-44 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-44 h-44 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
 
-      {/* 1. Header (Compact) */}
-      <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-emerald-500/30 gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
-            <Compass className="w-4 h-4" />
+      {/* 1. Header */}
+      <div className="flex items-center justify-between pb-3 mb-3 sm:pb-3.5 sm:mb-3.5 border-b border-emerald-500/30 gap-2 relative z-10">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+            <Compass className="w-5 h-5" />
           </div>
           <div className="min-w-0">
-            <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-extrabold block leading-none whitespace-nowrap">
+            <span className="text-[10px] sm:text-xs uppercase tracking-wider text-emerald-400 font-extrabold block leading-none whitespace-nowrap mb-0.5">
               অফিসিয়াল ভ্রমণ সনদপত্র
             </span>
-            <h3 className="text-xs sm:text-sm font-black text-white leading-tight mt-0.5 whitespace-nowrap">
+            <h3 className="text-sm sm:text-base font-black text-white leading-normal whitespace-nowrap">
               যাযাবর মিটার ২০২৬
             </h3>
           </div>
         </div>
 
         {/* Clean Date Badge with Generous Safety Padding to avoid border collision */}
-        <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-amber-300 font-bold bg-slate-900/90 pl-3 pr-4 sm:pl-3.5 sm:pr-4.5 py-1.5 rounded-xl border border-slate-800 shrink-0 whitespace-nowrap leading-normal shadow-sm">
+        <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-amber-300 font-bold bg-slate-900/90 pl-3 pr-4 sm:pl-3.5 sm:pr-4.5 py-1.5 sm:py-2 rounded-xl border border-slate-800 shrink-0 whitespace-nowrap leading-normal shadow-sm">
           <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
           <span className="whitespace-nowrap">{todayDate}</span>
         </div>
       </div>
 
       {/* 2. User Identity Row */}
-      <div className="flex items-center gap-3 bg-slate-900/95 border border-slate-800 p-2.5 sm:p-3 rounded-2xl mb-2.5">
+      <div className="flex items-center gap-3 bg-slate-900/95 border border-slate-800 p-3 sm:p-4 rounded-2xl mb-3 relative z-10">
         <UserAvatar
           avatarUrl={userProfile.avatarUrl}
           name={userProfile.name}
-          size={48}
+          size={52}
           className="ring-2 ring-amber-400 shrink-0"
         />
         <div className="min-w-0 flex-1">
@@ -108,38 +108,38 @@ export default function CertificateCard({
               </span>
             )}
           </div>
-          <span className="text-[11px] sm:text-xs text-amber-300 font-bold block mt-0.5 break-words">
+          <span className="text-xs text-amber-300 font-bold block mt-1 break-words">
             পদবী: {rank.title}
           </span>
         </div>
 
-        {/* District Travel Progress (Core Theme Focus) */}
-        <div className="text-right shrink-0">
-          <span className="text-[10px] text-slate-400 block font-semibold leading-tight">ভ্রমণ সম্পন্ন</span>
-          <div className="flex items-baseline justify-end gap-1">
-            <span className="text-xl sm:text-2xl font-black text-emerald-400 leading-none">
+        {/* District Travel Progress (Core Theme Focus with Safe Padding) */}
+        <div className="text-right shrink-0 bg-slate-950/70 border border-slate-800/80 px-3 py-2 rounded-xl min-w-[120px]">
+          <span className="text-[10px] text-slate-400 block font-semibold leading-none mb-1">ভ্রমণ সম্পন্ন</span>
+          <div className="flex items-baseline justify-end gap-1 leading-normal">
+            <span className="text-xl sm:text-2xl font-black text-emerald-400">
               {toBn(selectedCount)}
             </span>
-            <span className="text-xs sm:text-sm font-extrabold text-slate-300">/ ৬৪ জেলা</span>
+            <span className="text-xs sm:text-sm font-bold text-slate-300">/ ৬৪ জেলা</span>
           </div>
-          <span className="text-[10px] text-amber-300 font-bold block mt-0.5 whitespace-nowrap">
+          <span className="text-[10px] text-amber-300 font-bold block mt-1 whitespace-nowrap leading-none">
             {toBn(percentage)}% বাংলাদেশ
           </span>
         </div>
       </div>
 
       {/* 3. Progress Bar & District Count Ribbon */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 mb-2.5">
-        <div className="flex items-center justify-between text-xs font-bold mb-1.5">
-          <span className="text-slate-300 flex items-center gap-1 text-[11px]">
-            <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-3 mb-3 relative z-10">
+        <div className="flex items-center justify-between text-xs font-bold mb-2 gap-2">
+          <span className="text-slate-300 flex items-center gap-1.5 text-xs whitespace-nowrap">
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             বাংলাদেশ ভ্রমণ অগ্রগতি
           </span>
-          <span className="text-amber-300 text-xs">
+          <span className="text-amber-300 text-xs shrink-0 whitespace-nowrap">
             <strong className="text-white font-extrabold">{toBn(selectedCount)}</strong> / ৬৪ জেলা
           </span>
         </div>
-        <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+        <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
           <div
             className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-300"
             style={{ width: `${percentage}%` }}
@@ -148,8 +148,8 @@ export default function CertificateCard({
       </div>
 
       {/* 4. Compact Map Section with Highlighted Districts & Names on Map */}
-      <div className="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-2 mb-2.5 relative overflow-hidden">
-        <div className="relative w-full aspect-[600/540] max-h-[250px] sm:max-h-[270px] flex items-center justify-center">
+      <div className="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-2.5 mb-3 relative overflow-hidden">
+        <div className="relative w-full aspect-[600/500] max-h-[290px] sm:max-h-[310px] flex items-center justify-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 600 760"
@@ -219,38 +219,42 @@ export default function CertificateCard({
           )}
 
           {/* District counter badge in corner of map */}
-          <div className="absolute bottom-1 right-2 text-[10px] text-slate-300 font-bold bg-slate-900/90 px-2 py-0.5 rounded-md border border-slate-800 pointer-events-none">
+          <div className="absolute bottom-2 right-2.5 text-[11px] text-slate-200 font-bold bg-slate-900/95 px-3 py-1 rounded-lg border border-slate-700 pointer-events-none whitespace-nowrap shadow-lg">
             {toBn(selectedCount)} জেলা চিহ্নিত
           </div>
         </div>
       </div>
 
-      {/* 5. Roasting Quote (Compact & Crisp) */}
-      <div className="p-2.5 sm:p-3 rounded-2xl bg-slate-900/95 border border-amber-500/40 mb-2.5">
-        <div className="flex items-center gap-1 text-[11px] font-black text-amber-300 mb-0.5">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>অফিসিয়াল যাযাবর মূল্যায়ন:</span>
+      {/* 5. Roasting Quote with Explicit Header Border & Vertical Separation */}
+      <div className="p-3 sm:p-4 rounded-2xl bg-slate-900/95 border border-amber-500/40 mb-3 block relative z-10">
+        <div className="flex items-center gap-1.5 pb-2 mb-2 border-b border-amber-500/20">
+          <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <span className="text-xs font-black text-amber-300 whitespace-nowrap">
+            অফিসিয়াল যাযাবর মূল্যায়ন:
+          </span>
         </div>
-        <p className="text-xs sm:text-[13px] text-slate-100 leading-snug font-semibold">
+        <p className="text-xs sm:text-[13px] text-slate-100 leading-relaxed font-semibold block pt-0.5">
           &quot;{rank.roast}&quot;
         </p>
       </div>
 
       {/* Tour Memories Achievement Badge */}
       {memoryCount > 0 && (
-        <div className="p-2 sm:p-2.5 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900/90 to-amber-950/40 border border-amber-500/40 flex items-center justify-between gap-2 mb-2.5">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="p-1 rounded-lg bg-amber-500/20 text-amber-400 shrink-0">
-              <Smile className="w-3.5 h-3.5" />
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900/90 to-amber-950/40 border border-amber-500/40 flex items-center justify-between gap-3 mb-3 relative z-10">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400 shrink-0">
+              <Smile className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <span className="text-[10px] text-slate-300 block leading-tight font-medium">ট্যুরের কাণ্ডকারখানা স্বীকৃতি:</span>
-              <span className="text-[11px] sm:text-xs font-black text-amber-200 block break-words">
+              <span className="text-[10px] sm:text-[11px] text-slate-300 block leading-tight font-medium">
+                ট্যুরের কাণ্ডকারখানা স্বীকৃতি:
+              </span>
+              <span className="text-xs sm:text-sm font-black text-amber-200 block break-words mt-0.5">
                 {memoryRank} ({toBn(memoryCount)}টি ঘটনা)
               </span>
             </div>
           </div>
-          <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-black border border-amber-500/50 shrink-0 whitespace-nowrap">
+          <span className="px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-300 text-xs font-black border border-amber-500/50 shrink-0 whitespace-nowrap shadow-sm">
             +{toBn(bonusPoints)} বোনাস পয়েন্ট
           </span>
         </div>
@@ -258,14 +262,14 @@ export default function CertificateCard({
 
       {/* 6. Unlocked Badges (compact single row if any) */}
       {unlockedBadges.length > 0 && (
-        <div className="flex items-center gap-1.5 flex-wrap mb-2.5">
-          <span className="text-[11px] text-slate-300 font-bold mr-1 flex items-center gap-1">
-            <Award className="w-3 h-3 text-amber-400" /> ট্রফি:
+        <div className="flex items-center gap-1.5 flex-wrap mb-3 relative z-10">
+          <span className="text-[11px] sm:text-xs text-slate-300 font-bold mr-1 flex items-center gap-1">
+            <Award className="w-3.5 h-3.5 text-amber-400" /> ট্রফি:
           </span>
           {unlockedBadges.slice(0, 3).map((badge) => (
             <span
               key={badge.id}
-              className="px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-200 text-[10px] font-bold border border-amber-500/40"
+              className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-200 text-[10px] sm:text-[11px] font-bold border border-amber-500/40 whitespace-nowrap"
             >
               {badge.title}
             </span>
@@ -274,16 +278,16 @@ export default function CertificateCard({
       )}
 
       {/* 7. Footer (Verification Seal) */}
-      <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-300">
-        <div>
-          <span className="font-extrabold text-emerald-400 block text-xs leading-none">
+      <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-300 relative z-10 gap-2">
+        <div className="min-w-0">
+          <span className="font-extrabold text-emerald-400 block text-xs sm:text-sm leading-none whitespace-nowrap">
             jajabor.mdrasel.site
           </span>
-          <span className="text-[10px] text-slate-400 leading-tight">
+          <span className="text-[10px] sm:text-[11px] text-slate-400 leading-normal block mt-1 whitespace-nowrap">
             যাযাবর মিটার ২০২৬ | সনদ নং: JJB-{toBn(selectedCount)}
           </span>
         </div>
-        <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+        <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
           <ShieldCheck className="w-4 h-4" />
         </div>
       </div>
