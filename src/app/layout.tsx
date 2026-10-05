@@ -64,14 +64,16 @@ export default function RootLayout({
               <div className="w-10 h-10 rounded-2xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform duration-200">
                 <Compass className="w-6 h-6 group-hover:text-emerald-300" />
               </div>
-              <div className="flex flex-col">
-                <span className="font-extrabold text-base sm:text-lg leading-tight tracking-tight text-white flex items-center gap-2">
-                  যাযাবর মিটার
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+              <div className="flex flex-col justify-center">
+                <div className="flex items-center gap-2">
+                  <span className="font-extrabold text-base sm:text-lg leading-tight tracking-tight text-white">
+                    যাযাবর মিটার
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold leading-none inline-flex items-center">
                     ফান ভার্সন
                   </span>
-                </span>
-                <span className="text-xs text-slate-400 leading-tight">
+                </div>
+                <span className="text-[11px] sm:text-xs text-slate-400 leading-tight mt-1">
                   আসল যাযাবর নাকি খাটের রাজা?
                 </span>
               </div>
