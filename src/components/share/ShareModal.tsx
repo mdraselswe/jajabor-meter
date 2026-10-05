@@ -49,14 +49,46 @@ export default function ShareModal({
   const [cardHeight, setCardHeight] = useState<number | null>(null);
 
   const [isDownloading, setIsDownloading] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   const {
     isExporting,
     copySuccess,
     downloadImage,
+    uploadCertificate,
     getShareableText,
     copyShareText,
     shareNative,
   } = useShareCard();
+
+  // Background pre-upload certificate image as soon as modal opens
+  useEffect(() => {
+    if (!isOpen || uploadedImageUrl) return;
+
+    let isMounted = true;
+    const timer = setTimeout(async () => {
+      try {
+        const targetElement = exportCardRef.current;
+        if (targetElement && !uploadedImageUrl) {
+          setIsUploading(true);
+          const url = await uploadCertificate(targetElement);
+          if (isMounted && url) {
+            setUploadedImageUrl(url);
+          }
+        }
+      } catch (err) {
+        // fallback gracefully
+      } finally {
+        if (isMounted) setIsUploading(false);
+      }
+    }, 300);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [isOpen, uploadCertificate, uploadedImageUrl]);
 
   // Smooth responsive scaling for the in-modal preview on smaller screens
   useEffect(() => {
@@ -88,13 +120,43 @@ export default function ShareModal({
 
   if (!isOpen) return null;
 
-  const shareText = getShareableText(
-    userProfile,
-    selectedDistrictIds.length,
-    rank,
-    selectedDistrictIds,
-    selectedMemoryIds.length
-  );
+  const getDynamicLink = (imgUrl?: string | null) => {
+    const compareQuery = encodeCompareData(userProfile.name, selectedDistrictIds);
+    const memoryParam = selectedMemoryIds && selectedMemoryIds.length > 0 ? `&m=${encodeURIComponent(selectedMemoryIds.join(","))}` : "";
+    const activeImg = imgUrl ?? uploadedImageUrl;
+    const imgParam = activeImg ? `&img=${encodeURIComponent(activeImg)}` : "";
+    return `${getBaseUrl()}/compare?${compareQuery}${memoryParam}${imgParam}`;
+  };
+
+  const getDynamicShareText = (imgUrl?: string | null) => {
+    return getShareableText(
+      userProfile,
+      selectedDistrictIds.length,
+      rank,
+      selectedDistrictIds,
+      selectedMemoryIds.length,
+      imgUrl ?? uploadedImageUrl
+    );
+  };
+
+  const ensureUploadedImage = async (): Promise<string | null> => {
+    if (uploadedImageUrl) return uploadedImageUrl;
+    const targetElement = exportCardRef.current;
+    if (!targetElement) return null;
+    try {
+      setIsUploading(true);
+      const url = await uploadCertificate(targetElement);
+      if (url) {
+        setUploadedImageUrl(url);
+        return url;
+      }
+    } catch {
+      // ignore
+    } finally {
+      setIsUploading(false);
+    }
+    return null;
+  };
 
   const handleDownload = async () => {
     if (isDownloading || isExporting) return;
@@ -115,32 +177,38 @@ export default function ShareModal({
     try {
       const targetElement = exportCardRef.current;
       if (!targetElement) return;
+      const activeUrl = await ensureUploadedImage();
+      const currentShareText = getDynamicShareText(activeUrl);
       const safeName = (userProfile.name || "jajabor").trim().replace(/[\s/\\?%*:|"<>]+/g, "-");
-      await shareNative(targetElement, shareText, "যাযাবর মিটার সনদপত্র", safeName);
+      await shareNative(targetElement, currentShareText, "যাযাবর মিটার সনদপত্র", safeName);
     } catch (e) {
       console.error("Native share caught error:", e);
     }
   };
 
-  const compareQuery = encodeCompareData(userProfile.name, selectedDistrictIds);
-  const liveCompareLink = `${getBaseUrl()}/compare?${compareQuery}`;
-
-  const handleWhatsAppShare = () => {
-    const encoded = encodeURIComponent(shareText);
-    window.open(`https://wa.me/?text=${encoded}`, "_blank");
+  const handleWhatsAppShare = async () => {
+    const activeUrl = await ensureUploadedImage();
+    const currentShareText = getDynamicShareText(activeUrl);
+    window.open(`https://wa.me/?text=${encodeURIComponent(currentShareText)}`, "_blank");
   };
 
-  const handleFacebookShare = () => {
-    copyShareText(shareText);
+  const handleFacebookShare = async () => {
+    const activeUrl = await ensureUploadedImage();
+    const link = getDynamicLink(activeUrl);
+    const currentShareText = getDynamicShareText(activeUrl);
+    copyShareText(currentShareText);
     window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(liveCompareLink)}&quote=${encodeURIComponent(shareText)}`,
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent(currentShareText)}`,
       "_blank"
     );
   };
 
-  const handleTelegramShare = () => {
+  const handleTelegramShare = async () => {
+    const activeUrl = await ensureUploadedImage();
+    const link = getDynamicLink(activeUrl);
+    const currentShareText = getDynamicShareText(activeUrl);
     window.open(
-      `https://t.me/share/url?url=${encodeURIComponent(liveCompareLink)}&text=${encodeURIComponent(shareText)}`,
+      `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(currentShareText)}`,
       "_blank"
     );
   };
@@ -277,7 +345,10 @@ export default function ShareModal({
         <div className="flex flex-wrap items-center justify-center gap-2 pt-3 border-t border-slate-800">
           {/* Copy Caption & Link */}
           <button
-            onClick={() => copyShareText(shareText)}
+            onClick={async () => {
+              const activeUrl = await ensureUploadedImage();
+              copyShareText(getDynamicShareText(activeUrl));
+            }}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 font-semibold border border-slate-700 transition"
           >
             {copySuccess ? (

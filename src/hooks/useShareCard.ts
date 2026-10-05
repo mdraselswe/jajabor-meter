@@ -196,16 +196,49 @@ export function useShareCard() {
     [isExporting]
   );
 
+  const uploadCertificate = useCallback(
+    async (cardElement: HTMLElement | null): Promise<string | null> => {
+      if (!cardElement) return null;
+      try {
+        const dataUrl = await generateCardPng(cardElement);
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+
+        const formData = new FormData();
+        formData.append("file", blob, "jajabor-certificate.png");
+
+        const uploadRes = await fetch("/api/share-image", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (uploadRes.ok) {
+          const data = await uploadRes.json();
+          if (data?.url) {
+            return data.url;
+          }
+        }
+      } catch (err) {
+        console.warn("Background certificate upload skipped:", err);
+      }
+      return null;
+    },
+    []
+  );
+
   const getShareableText = useCallback(
     (
       userProfile: UserProfile,
       districtCount: number,
       rank: TitleRank,
       districtIds: string[],
-      memoryCount: number = 0
+      memoryCount: number = 0,
+      imageUrl?: string | null
     ) => {
       const compareQuery = encodeCompareData(userProfile.name, districtIds);
-      const liveLink = `${getBaseUrl()}/compare?${compareQuery}`;
+      const memoryParam = memoryCount > 0 ? `&m=${memoryCount}` : "";
+      const imgParam = imageUrl ? `&img=${encodeURIComponent(imageUrl)}` : "";
+      const liveLink = `${getBaseUrl()}/compare?${compareQuery}${memoryParam}${imgParam}`;
       const totalScore = calculateTotalScore(districtCount, memoryCount);
       const bonusPoints = calculateBonusPoints(memoryCount);
       const memoryText =
@@ -298,6 +331,7 @@ export function useShareCard() {
     isExporting,
     copySuccess,
     downloadImage,
+    uploadCertificate,
     getShareableText,
     copyShareText,
     shareNative,
