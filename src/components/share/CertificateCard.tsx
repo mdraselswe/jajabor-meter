@@ -121,30 +121,14 @@ export default function CertificateCard({
             </div>
           </div>
 
-          {/* Focused Travel Metric Box */}
-          <div className="text-right shrink-0 bg-slate-950/80 border border-emerald-500/30 px-3 py-1.5 rounded-lg shadow-inner">
-            <span className="text-[9.5px] text-slate-400 block font-semibold leading-none mb-1">
-              ঘুরে দেখা জেলা
+          {/* Bold and Compact District Count */}
+          <div className="shrink-0 bg-slate-950/80 border border-emerald-500/30 px-3 py-1.5 rounded-xl shadow-inner flex items-baseline gap-1.5">
+            <span className="text-2xl sm:text-3xl font-black text-emerald-400 leading-none">
+              {toBn(selectedCount)}
             </span>
-            <div className="flex items-baseline justify-end gap-1 leading-none">
-              <span className="text-xl font-black text-emerald-400">
-                {toBn(selectedCount)}
-              </span>
-              <span className="text-[11px] font-bold text-slate-300 whitespace-nowrap">
-                / ৬৪ জেলা
-              </span>
-            </div>
-            <div className="flex items-center justify-end gap-1.5 mt-1">
-              <div className="w-14 bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                <div
-                  className="bg-emerald-400 h-full rounded-full"
-                  style={{ width: `${percentage}%` }}
-                />
-              </div>
-              <span className="text-[10px] text-amber-300 font-black leading-none whitespace-nowrap">
-                {toBn(percentage)}%
-              </span>
-            </div>
+            <span className="text-xs sm:text-sm font-extrabold text-slate-200 leading-none whitespace-nowrap">
+              / ৬৪ জেলা
+            </span>
           </div>
         </div>
       </div>
