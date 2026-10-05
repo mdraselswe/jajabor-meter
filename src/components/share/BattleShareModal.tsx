@@ -35,8 +35,7 @@ export default function BattleShareModal({
   challengerName,
   challengerDistrictIds,
 }: BattleShareModalProps) {
-  const previewCardRef = useRef<HTMLDivElement>(null);
-  const exportCardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const {
@@ -71,8 +70,7 @@ export default function BattleShareModal({
     if (isDownloading || isExporting) return;
     try {
       setIsDownloading(true);
-      const targetCard = exportCardRef.current || previewCardRef.current;
-      await downloadImage(targetCard, fileName);
+      await downloadImage(cardRef.current, fileName);
     } catch (e) {
       console.error("Download caught error:", e);
     } finally {
@@ -82,8 +80,7 @@ export default function BattleShareModal({
 
   const handleNativeShare = async () => {
     try {
-      const targetCard = exportCardRef.current || previewCardRef.current;
-      await shareNative(targetCard, shareText, "১v১ ভ্রমণ যুদ্ধ ফলাফল", `${safeMyName}-vs-${safeChallengerName}`);
+      await shareNative(cardRef.current, shareText, "১v১ ভ্রমণ যুদ্ধ ফলাফল", `${safeMyName}-vs-${safeChallengerName}`);
     } catch (e) {
       console.error("Native share caught error:", e);
     }
@@ -111,31 +108,6 @@ export default function BattleShareModal({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md p-3 sm:p-6 animate-in fade-in duration-200">
-      {/* Hidden Off-Screen Dedicated Export Card (Fixed 560px at 0,0, never affected by mobile scroll or viewport) */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          zIndex: -9999,
-          pointerEvents: "none",
-          opacity: 0,
-          width: "560px",
-          minWidth: "560px",
-          maxWidth: "560px",
-        }}
-        aria-hidden="true"
-      >
-        <BattleResultCard
-          cardRef={exportCardRef}
-          myProfile={myProfile}
-          myDistrictIds={myDistrictIds}
-          challengerName={challengerName}
-          challengerDistrictIds={challengerDistrictIds}
-          isExport={true}
-        />
-      </div>
-
       <div className="min-h-full flex items-center justify-center py-6 sm:py-10">
         <div className="relative max-w-2xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-4 sm:p-6 shadow-2xl my-auto animate-in zoom-in-95 duration-200">
           {/* Modal Header */}
@@ -161,15 +133,14 @@ export default function BattleShareModal({
             </button>
           </div>
 
-          {/* Result Card Preview */}
+          {/* Result Card Preview (What you see is exactly what downloads) */}
           <div className="flex justify-center mb-5 w-full">
             <BattleResultCard
-              cardRef={previewCardRef}
+              cardRef={cardRef}
               myProfile={myProfile}
               myDistrictIds={myDistrictIds}
               challengerName={challengerName}
               challengerDistrictIds={challengerDistrictIds}
-              isExport={false}
             />
           </div>
 

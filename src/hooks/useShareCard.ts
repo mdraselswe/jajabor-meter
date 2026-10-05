@@ -36,10 +36,6 @@ export function useShareCard() {
         style: {
           transform: "none",
           margin: "0",
-          position: "static",
-          maxHeight: "none",
-          maxWidth: "none",
-          overflow: "visible",
         },
       });
 
@@ -63,8 +59,6 @@ export function useShareCard() {
         allowTaint: true,
         backgroundColor: null,
         logging: false,
-        scrollX: 0,
-        scrollY: 0,
       });
       const dataUrl = canvas.toDataURL("image/png");
       if (dataUrl && dataUrl.length > 500) {
