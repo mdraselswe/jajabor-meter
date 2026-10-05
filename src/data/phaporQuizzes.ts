@@ -22,8 +22,29 @@ export const PHAPOR_QUIZZES: Record<string, PhaporQuiz> = {
       },
     ],
   },
+  bogura: {
+    districtId: "bogura",
+    question: "বগুড়ার দই কেমন পাত্রে খাইছিলেন?",
+    options: [
+      {
+        text: "লাল মাটির আসল গোল হাঁড়িতে চামচ দিয়ে",
+        isLegit: true,
+        roastReply: "খাঁটি ভোজনরসিক! মাটির গন্ধ ছাড়া কি আর বগুড়ার দই জমে?",
+      },
+      {
+        text: "প্লাস্টিকের ওয়ান-টাইম কাপে",
+        isLegit: false,
+        roastReply: "ভেজাল ট্রাভেলার! প্লাস্টিকের কাপে দই খাওয়ার পাপ মাফ নাই!",
+      },
+      {
+        text: "আমি তো ডায়াবেটিসের ডরে খাই-ই নাই",
+        isLegit: false,
+        roastReply: "বগুড়ায় গিয়ে দই না খাওয়া মানে প্যারিসে গিয়ে আইফেল টাওয়ার না দেখা!",
+      },
+    ],
+  },
   bogra: {
-    districtId: "bogra",
+    districtId: "bogura",
     question: "বগুড়ার দই কেমন পাত্রে খাইছিলেন?",
     options: [
       {

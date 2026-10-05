@@ -64,7 +64,7 @@ export default function DistrictTooltip({
           <div className="flex items-center gap-1.5 min-w-0">
             <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
             <h4 className="font-bold text-white text-sm truncate">
-              {district.nameBn} ({district.nameEn})
+              {district.nameBn}
             </h4>
           </div>
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 shrink-0 border border-slate-700 font-medium">

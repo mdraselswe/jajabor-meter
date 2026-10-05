@@ -368,25 +368,25 @@ export const DISTRICT_CENTERS: Record<string, DistrictCenter> = {
   },
   "chattogram": {
     "id": "chattogram",
-    "nameBn": "Chattogram",
+    "nameBn": "চট্টগ্রাম",
     "x": 470,
     "y": 540
   },
   "netrokona": {
     "id": "netrokona",
-    "nameBn": "Netrokona",
+    "nameBn": "নেত্রকোণা",
     "x": 363,
     "y": 236
   },
   "bogura": {
     "id": "bogura",
-    "nameBn": "Bogura",
+    "nameBn": "বগুড়া",
     "x": 180,
     "y": 242
   },
   "chapainawabganj": {
     "id": "chapainawabganj",
-    "nameBn": "Chapainawabganj",
+    "nameBn": "চাঁপাইনবাবগঞ্জ",
     "x": 50,
     "y": 260
   }

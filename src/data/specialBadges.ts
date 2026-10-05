@@ -27,14 +27,14 @@ export const SPECIAL_BADGES: SpecialBadge[] = [
     title: "আমের কারিগর",
     description: "রাজশাহী ও চাঁপাইনবাবগঞ্জ গিয়ে আমের আসল স্বাদ চিনেছেন!",
     iconName: "Sun",
-    requiredDistricts: ["rajshahi", "chapai-nawabganj"],
+    requiredDistricts: ["rajshahi", "chapainawabganj"],
   },
   {
     id: "sweet-hunter",
     title: "মিষ্টি শিকারী",
     description: "বগুড়া (দই), নাটোর (কাঁচাগোল্লা) ও কুমিল্লা (রসমলাই) দিয়ে মিষ্টির স্বর্গ ঘুরেছেন!",
     iconName: "Cake",
-    requiredDistricts: ["bogra", "natore", "cumilla"],
+    requiredDistricts: ["bogura", "natore", "cumilla"],
   },
   {
     id: "ocean-wanderer",

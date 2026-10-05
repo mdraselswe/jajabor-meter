@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useRef } from "react";
 import { DISTRICTS, District, DIVISIONS } from "@/data/districts";
 import { DISTRICT_CENTERS } from "@/data/districtCenters";
+import { matchesDistrictSearch } from "@/utils/districtSearch";
 import DistrictPath from "./DistrictPath";
 import DistrictTooltip from "./DistrictTooltip";
 import DivisionFilter from "./DivisionFilter";
@@ -37,15 +38,12 @@ export default function BangladeshMap({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
-  // Filter districts based on division and search
+  // Filter districts based on division and search (supports English & Bangla)
   const filteredDistricts = useMemo(() => {
     return DISTRICTS.filter((d) => {
       const matchesDivision =
         activeDivision === "All" || d.divisionEn === activeDivision;
-      const matchesSearch =
-        searchQuery === "" ||
-        d.nameBn.includes(searchQuery) ||
-        d.nameEn.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = matchesDistrictSearch(d, searchQuery);
       return matchesDivision && matchesSearch;
     });
   }, [activeDivision, searchQuery]);
@@ -97,7 +95,7 @@ export default function BangladeshMap({
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder="জেলা খুঁজুন (উদাঃ সিলেট, বগুড়া)..."
+              placeholder="জেলা খুঁজুন (যেমন: Sylhet, বগুড়া, Chittagong)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2.5 bg-slate-800/90 border border-slate-700 rounded-2xl text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
@@ -200,9 +198,7 @@ export default function BangladeshMap({
                 const isHovered = hoveredDistrict?.id === district.id;
                 const isDimmed =
                   (activeDivision !== "All" && district.divisionEn !== activeDivision) ||
-                  (searchQuery !== "" &&
-                    !district.nameBn.includes(searchQuery) &&
-                    !district.nameEn.toLowerCase().includes(searchQuery.toLowerCase()));
+                  !matchesDistrictSearch(district, searchQuery);
 
                 return (
                   <DistrictPath
@@ -225,6 +221,8 @@ export default function BangladeshMap({
               {selectedDistrictIds.map((id) => {
                 const center = DISTRICT_CENTERS[id];
                 if (!center) return null;
+                const district = DISTRICTS.find((d) => d.id === id);
+                const displayNameBn = district?.nameBn || center.nameBn;
 
                 return (
                   <g key={`map-label-${id}`}>
@@ -249,7 +247,7 @@ export default function BangladeshMap({
                       fontSize="11"
                       fontWeight="900"
                     >
-                      {center.nameBn}
+                      {displayNameBn}
                     </text>
                   </g>
                 );
