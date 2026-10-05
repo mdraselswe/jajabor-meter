@@ -33,11 +33,21 @@ export function useAuth(
       const user = result.user;
 
       if (user) {
-        onProfileUpdate({
+        const profileData = {
           name: user.displayName || "গুগল পর্যটক",
           avatarUrl: user.photoURL || null,
           isLoggedIn: true,
-        });
+        };
+        onProfileUpdate(profileData);
+
+        // Notify VisitorTracker immediately so dashboard updates in real-time
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("jajabor_auth_state_changed", {
+              detail: profileData,
+            })
+          );
+        }
       }
     } catch (error: any) {
       console.error("Google sign-in error:", error);
@@ -84,6 +94,18 @@ export function useAuth(
       avatarUrl: null,
       isLoggedIn: false,
     });
+
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("jajabor_auth_state_changed", {
+          detail: {
+            name: "অতিথি যাযাবর",
+            avatarUrl: null,
+            isLoggedIn: false,
+          },
+        })
+      );
+    }
   };
 
   return {
