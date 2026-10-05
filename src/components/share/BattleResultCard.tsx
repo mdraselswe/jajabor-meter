@@ -105,15 +105,15 @@ export default function BattleResultCard({
             <span className="text-[10px] sm:text-xs uppercase tracking-wider text-amber-400 font-extrabold leading-none mb-1 whitespace-nowrap">
               ১v১ বন্ধু ভ্রমণ যুদ্ধ সনদ
             </span>
-            <h3 className="text-sm sm:text-base font-black text-white leading-none whitespace-nowrap truncate">
+            <h3 className="text-sm sm:text-base font-black text-white leading-none whitespace-nowrap">
               যাযাবর মিটার ২০২৬
             </h3>
           </div>
         </div>
 
-        {/* Calendar Badge */}
-        <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-slate-300 font-semibold bg-slate-900/95 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-slate-800 shrink-0 whitespace-nowrap">
-          <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400 shrink-0" />
+        {/* Clean, Premium Themed Date Badge */}
+        <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-amber-300 font-bold bg-amber-500/15 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-amber-500/35 shrink-0 whitespace-nowrap shadow-sm shadow-amber-950/40">
+          <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
           <span>{todayDate}</span>
         </div>
       </div>
@@ -137,10 +137,10 @@ export default function BattleResultCard({
               )}
             </div>
 
-            <div className="text-xs sm:text-sm font-black text-white truncate max-w-[130px] sm:max-w-[200px] leading-tight block mb-1">
+            <div className="text-xs sm:text-sm font-black text-white text-center leading-snug block mb-1 break-words w-full px-1">
               {myProfile.name}
             </div>
-            <div className="text-[10px] sm:text-xs text-emerald-400 font-bold leading-tight line-clamp-2 max-w-[130px] sm:max-w-[200px] block mb-2 sm:mb-2.5">
+            <div className="text-[10px] sm:text-xs text-emerald-400 font-bold leading-tight text-center block mb-2 sm:mb-2.5 px-1">
               {myRank.title}
             </div>
 
@@ -177,10 +177,10 @@ export default function BattleResultCard({
               )}
             </div>
 
-            <div className="text-xs sm:text-sm font-black text-white truncate max-w-[130px] sm:max-w-[200px] leading-tight block mb-1">
+            <div className="text-xs sm:text-sm font-black text-white text-center leading-snug block mb-1 break-words w-full px-1">
               {challengerName}
             </div>
-            <div className="text-[10px] sm:text-xs text-amber-400 font-bold leading-tight line-clamp-2 max-w-[130px] sm:max-w-[200px] block mb-2 sm:mb-2.5">
+            <div className="text-[10px] sm:text-xs text-amber-400 font-bold leading-tight text-center block mb-2 sm:mb-2.5 px-1">
               {challengerRank.title}
             </div>
 
@@ -223,8 +223,8 @@ export default function BattleResultCard({
         {/* Row 2: Exclusive Districts */}
         <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
           <div className="p-2.5 sm:p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-center block min-w-0">
-            <div className="text-[11px] sm:text-xs text-slate-400 font-medium leading-tight truncate block mb-1">
-              শুধু {myProfile.name}
+            <div className="text-[11px] sm:text-xs text-slate-300 font-medium leading-tight block mb-1.5 break-words">
+              শুধু <span className="font-bold text-white">{myProfile.name}</span>
             </div>
             <div className="text-xs sm:text-sm font-black text-teal-300 block">
               {toBn(myOnlyCount)}টি জেলা
@@ -232,8 +232,8 @@ export default function BattleResultCard({
           </div>
 
           <div className="p-2.5 sm:p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-center block min-w-0">
-            <div className="text-[11px] sm:text-xs text-slate-400 font-medium leading-tight truncate block mb-1">
-              শুধু {challengerName}
+            <div className="text-[11px] sm:text-xs text-slate-300 font-medium leading-tight block mb-1.5 break-words">
+              শুধু <span className="font-bold text-white">{challengerName}</span>
             </div>
             <div className="text-xs sm:text-sm font-black text-amber-300 block">
               {toBn(challengerOnlyCount)}টি জেলা
