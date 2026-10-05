@@ -135,7 +135,7 @@ export default function BattleShareModal({
           </div>
 
           {/* Result Card Preview */}
-          <div className="flex justify-center mb-5 overflow-visible">
+          <div className="flex justify-center mb-5 overflow-x-auto max-w-full pb-1">
             <BattleResultCard
               cardRef={cardRef}
               myProfile={myProfile}

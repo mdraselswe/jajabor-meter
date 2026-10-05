@@ -14,25 +14,7 @@ export function useShareCard() {
   const [copySuccess, setCopySuccess] = useState(false);
 
   const generateCardPng = async (cardElement: HTMLElement): Promise<string> => {
-    // Strategy 1: html2canvas (Direct DOM-to-Canvas rendering, immune to foreignObject SVG decode errors)
-    try {
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(cardElement, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
-        logging: false,
-      });
-      const dataUrl = canvas.toDataURL("image/png");
-      if (dataUrl && dataUrl.length > 500) {
-        return dataUrl;
-      }
-    } catch (h2cError) {
-      console.warn("html2canvas issue, falling back to html-to-image:", h2cError);
-    }
-
-    // Strategy 2: html-to-image with decode unhandled rejection safeguard
+    // Strategy 1: html-to-image with decode safeguard (Native SVG foreignObject rendering with perfect Bengali ligatures & alignment)
     try {
       let originalDecode: typeof HTMLImageElement.prototype.decode | null = null;
       if (typeof window !== "undefined" && HTMLImageElement.prototype.decode) {
@@ -64,11 +46,33 @@ export function useShareCard() {
         HTMLImageElement.prototype.decode = originalDecode;
       }
 
-      return dataUrl;
+      if (dataUrl && dataUrl.length > 500) {
+        return dataUrl;
+      }
     } catch (h2iError) {
-      console.error("html-to-image fallback failed:", h2iError);
-      throw h2iError;
+      console.warn("html-to-image issue, falling back to html2canvas:", h2iError);
     }
+
+    // Strategy 2: html2canvas fallback
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(cardElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        logging: false,
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      if (dataUrl && dataUrl.length > 500) {
+        return dataUrl;
+      }
+    } catch (h2cError) {
+      console.error("html2canvas fallback failed:", h2cError);
+      throw h2cError;
+    }
+
+    throw new Error("Failed to export image from both renderers.");
   };
 
   const downloadImage = useCallback(
