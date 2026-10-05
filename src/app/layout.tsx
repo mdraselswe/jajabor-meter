@@ -12,7 +12,7 @@ const notoSansBengali = Noto_Sans_Bengali({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("http://jajabor.mdrasel.site"),
+  metadataBase: new URL("https://jajabor.mdrasel.site"),
   title: "যাযাবর মিটার (Jajabor Meter) - আপনি কতটা আসল পর্যটক?",
   description: "বাংলাদেশের ৬৪ জেলার কালারফুল ইন্টারেক্টিভ ম্যাপ। সিলেক্ট করুন আপনি কোন কোন জেলায় গেছেন, মেপে দেখুন আপনার যাযাবর স্কোর এবং জানুন আপনি কতটা আসল পর্যটক নাকি আন্তর্জাতিক ফাঁপরবাজ!",
   keywords: ["যাযাবর মিটার", "Jajabor Meter", "বাংলাদেশ ম্যাপ", "৬৪ জেলা", "ট্যুর স্কোর", "ভ্রমণ সনদপত্র", "Bangladesh Travel Map"],
@@ -20,16 +20,17 @@ export const metadata: Metadata = {
   openGraph: {
     title: "যাযাবর মিটার - আপনি কতটা আসল যাযাবর?",
     description: "বাংলাদেশের ৬৪ জেলায় আপনার ভ্রমণ ট্র্যাক করুন এবং পেয়ে যান অফিসিয়াল ফাঁপর ও ভ্রমণ সনদপত্র!",
-    url: "http://jajabor.mdrasel.site",
+    url: "https://jajabor.mdrasel.site",
     siteName: "যাযাবর মিটার",
     locale: "bn_BD",
     type: "website",
     images: [
       {
-        url: "http://jajabor.mdrasel.site/og-banner.svg",
+        url: "/og-banner.png",
         width: 1200,
         height: 630,
         alt: "যাযাবর মিটার - আপনি কতটা আসল পর্যটক?",
+        type: "image/png",
       },
     ],
   },
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "যাযাবর মিটার (Jajabor Meter)",
     description: "৬৪ জেলায় আপনার ভ্রমণ মাপুন এবং বন্ধুদের চ্যালেঞ্জ করুন!",
-    images: ["http://jajabor.mdrasel.site/og-banner.svg"],
+    images: ["/og-banner.png"],
   },
   icons: {
     icon: [
