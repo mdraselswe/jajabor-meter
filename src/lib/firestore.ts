@@ -172,50 +172,47 @@ export async function getAnalytics(): Promise<{
 
     if (res.ok) {
       const json = await res.json();
-      if (Array.isArray(json.documents)) {
-        const firestoreVisitors: VisitorRecord[] = json.documents.map((d: any) => {
-          const f = d.fields || {};
-          return {
-            visitorId: f.visitorId?.stringValue || d.name?.split("/").pop() || "",
-            userType: (f.userType?.stringValue as any) || "guest",
-            name: f.name?.stringValue || "অতিথি যাযাবর",
-            avatarUrl: f.avatarUrl?.stringValue || null,
-            device: (f.device?.stringValue as any) || "desktop",
-            lastVisit: f.lastVisit?.stringValue || new Date().toISOString(),
-            firstVisit: f.firstVisit?.stringValue,
-            visitCount: parseInt(f.visitCount?.integerValue || "1", 10),
-            lastPath: f.lastPath?.stringValue || "/",
-          };
-        });
-
-        firestoreVisitors.sort(
-          (a, b) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime()
-        );
-
-        const loggedInCount = firestoreVisitors.filter((v) => v.userType === "logged_in").length;
-        const guestCount = firestoreVisitors.filter((v) => v.userType === "guest").length;
-        const totalVisits = firestoreVisitors.reduce((acc, v) => acc + (v.visitCount || 1), 0);
-        const deviceMobile = firestoreVisitors.filter((v) => v.device === "mobile").length;
-        const deviceDesktop = firestoreVisitors.filter((v) => v.device !== "mobile").length;
-
-        isFirestoreLive = true;
-
+      const docs = Array.isArray(json.documents) ? json.documents : [];
+      const firestoreVisitors: VisitorRecord[] = docs.map((d: any) => {
+        const f = d.fields || {};
         return {
-          summary: {
-            totalVisits,
-            totalUniqueVisitors: firestoreVisitors.length,
-            totalLoggedInUsers: loggedInCount,
-            totalGuests: guestCount,
-            deviceMobile,
-            deviceDesktop,
-            todayVisits: firestoreVisitors.length,
-            lastUpdated: new Date().toISOString(),
-            isFirestoreLive: true,
-          },
-          recentVisitors: firestoreVisitors,
-          isFirestoreLive: true,
+          visitorId: f.visitorId?.stringValue || d.name?.split("/").pop() || "",
+          userType: (f.userType?.stringValue as any) || "guest",
+          name: f.name?.stringValue || "অতিথি যাযাবর",
+          avatarUrl: f.avatarUrl?.stringValue || null,
+          device: (f.device?.stringValue as any) || "desktop",
+          lastVisit: f.lastVisit?.stringValue || new Date().toISOString(),
+          firstVisit: f.firstVisit?.stringValue,
+          visitCount: parseInt(f.visitCount?.integerValue || "1", 10),
+          lastPath: f.lastPath?.stringValue || "/",
         };
-      }
+      });
+
+      firestoreVisitors.sort(
+        (a, b) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime()
+      );
+
+      const loggedInCount = firestoreVisitors.filter((v) => v.userType === "logged_in").length;
+      const guestCount = firestoreVisitors.filter((v) => v.userType === "guest").length;
+      const totalVisits = firestoreVisitors.reduce((acc, v) => acc + (v.visitCount || 1), 0);
+      const deviceMobile = firestoreVisitors.filter((v) => v.device === "mobile").length;
+      const deviceDesktop = firestoreVisitors.filter((v) => v.device !== "mobile").length;
+
+      return {
+        summary: {
+          totalVisits: totalVisits || memoryCache.totalVisits,
+          totalUniqueVisitors: firestoreVisitors.length || Object.keys(memoryCache.visitors).length,
+          totalLoggedInUsers: loggedInCount,
+          totalGuests: guestCount,
+          deviceMobile: deviceMobile || memoryCache.deviceMobile,
+          deviceDesktop: deviceDesktop || memoryCache.deviceDesktop,
+          todayVisits: firestoreVisitors.length || memoryCache.todayVisits,
+          lastUpdated: new Date().toISOString(),
+          isFirestoreLive: true,
+        },
+        recentVisitors: firestoreVisitors.length > 0 ? firestoreVisitors : Object.values(memoryCache.visitors),
+        isFirestoreLive: true,
+      };
     }
   } catch {
     // fallback to local cache

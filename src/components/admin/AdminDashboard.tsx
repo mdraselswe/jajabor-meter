@@ -144,11 +144,22 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       {/* Top Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl backdrop-blur-md">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-xs font-black text-emerald-400 uppercase tracking-wider">
               অ্যাডমিন কন্ট্রোল সেন্টার
             </span>
+            {isFirestoreLive ? (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                ক্লাউড ডাটাবেজ: কানেক্টেড ✓
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                লোকাল মেমোরি মোড
+              </span>
+            )}
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
             যাযাবর মিটার ভিজিটর অ্যানালিটিক্স
@@ -179,7 +190,35 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       </div>
 
       {/* Firestore Connection Status Banner */}
-      {!isFirestoreLive && !isLoading && (
+      {isFirestoreLive ? (
+        <div className="p-4 sm:p-5 rounded-3xl bg-emerald-950/40 border border-emerald-500/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg animate-in fade-in">
+          <div className="flex items-start gap-3.5">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <h4 className="text-sm font-bold text-emerald-200">
+                  ফায়ারবেজ ফায়ারস্টোর ক্লাউড সফলভাবে কানেক্টেড! (Live & Active)
+                </h4>
+              </div>
+              <p className="text-xs text-emerald-300/80 mt-1 leading-relaxed">
+                আপনার Firestore Database সফলভাবে সক্রিয় হয়েছে। ওয়েবসাইটে যেসকল ব্যবহারকারী ভিজিট করছেন, তাদের ডেটা রিয়েল-টাইমে গুগল ক্লাউড ফায়ারস্টোরে সংরক্ষিত হচ্ছে।
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://console.firebase.google.com/project/jajabor-meter/firestore"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black transition shrink-0 active:scale-95 shadow-md"
+          >
+            <span>Firebase Console-এ ডাটা দেখুন</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </div>
+      ) : !isLoading ? (
         <div className="p-4 sm:p-5 rounded-3xl bg-amber-950/40 border border-amber-600/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg animate-in fade-in">
           <div className="flex items-start gap-3.5">
             <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
@@ -195,7 +234,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             </div>
           </div>
           <a
-            href="https://console.firebase.google.com"
+            href="https://console.firebase.google.com/project/jajabor-meter/firestore"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition shrink-0 active:scale-95 shadow-md"
@@ -204,7 +243,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </div>
-      )}
+      ) : null}
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
