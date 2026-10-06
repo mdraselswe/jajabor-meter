@@ -7,7 +7,6 @@ import { toBn } from "@/utils/bengaliDigits";
 import { 
   Swords, 
   Trophy, 
-  Calendar, 
   ShieldCheck, 
   CheckCircle2
 } from "lucide-react";
@@ -61,12 +60,6 @@ export default function BattleResultCard({
     winnerSub = `${toBn(challengerCount - myCount)}টি জেলায় এগিয়ে থেকে এই যুদ্ধে বিজয়ী হয়েছেন!`;
   }
 
-  const todayDate = new Date().toLocaleDateString("bn-BD", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
   return (
     <div
       ref={cardRef}
@@ -96,11 +89,10 @@ export default function BattleResultCard({
           </div>
         </div>
 
-        {/* Clean, Premium Themed Date Badge with Generous Right Padding */}
-        <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-amber-300 font-bold bg-amber-500/15 pl-3 pr-4 sm:pl-3.5 sm:pr-4.5 py-1.5 sm:py-2 rounded-xl border border-amber-500/35 shrink-0 whitespace-nowrap shadow-sm shadow-amber-950/40 leading-normal">
-          <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span className="whitespace-nowrap">{todayDate}</span>
-        </div>
+        {/* Clean Brand Badge */}
+        <span className="text-[11px] font-extrabold text-amber-300 bg-amber-500/20 px-3 py-1.5 rounded-xl border border-amber-500/40 shrink-0 whitespace-nowrap shadow-sm">
+          অফিসিয়াল যুদ্ধ
+        </span>
       </div>
 
       {/* 2. Duel Scoreboard (VS Arena) */}

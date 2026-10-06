@@ -34,12 +34,6 @@ export async function GET(req: NextRequest) {
     const rank = calculateRank(districtCount);
     const percentage = calculatePercentage(districtCount);
 
-    const todayDate = new Date().toLocaleDateString("bn-BD", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-
     // 2. Fetch local fonts as ArrayBuffer (Edge runtime compatible)
     const fontBold = await fetch(
       new URL("../../../../public/fonts/HindSiliguri-Bold.ttf", import.meta.url)
@@ -147,23 +141,6 @@ export async function GET(req: NextRequest) {
                       : "৬৪ জেলার ভ্রমণ মানচিত্র ও সারাংশ"}
                   </span>
                 </div>
-              </div>
-
-              {/* Date */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  backgroundColor: "rgba(15, 23, 42, 0.85)",
-                  padding: "6px 14px",
-                  borderRadius: "12px",
-                  border: "1px solid #334155",
-                  color: "#cbd5e1",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                }}
-              >
-                <span>{todayDate}</span>
               </div>
             </div>
 
