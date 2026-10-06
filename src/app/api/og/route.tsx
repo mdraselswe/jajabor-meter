@@ -1,10 +1,13 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
+import fs from "fs";
+import path from "path";
 import { calculateRank, calculatePercentage } from "@/utils/scoreCalculator";
 import { toBn } from "@/utils/bengaliDigits";
 import { DISTRICTS } from "@/data/districts";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
@@ -34,14 +37,13 @@ export async function GET(req: NextRequest) {
     const rank = calculateRank(districtCount);
     const percentage = calculatePercentage(districtCount);
 
-    // 2. Fetch local fonts as ArrayBuffer (Edge runtime compatible)
-    const fontBold = await fetch(
-      new URL("../../../../public/fonts/HindSiliguri-Bold.ttf", import.meta.url)
-    ).then((res) => res.arrayBuffer());
-
-    const fontRegular = await fetch(
-      new URL("../../../../public/fonts/HindSiliguri-Regular.ttf", import.meta.url)
-    ).then((res) => res.arrayBuffer());
+    // Read fonts safely from filesystem (Node.js runtime compatible)
+    const fontBold = fs.readFileSync(
+      path.join(process.cwd(), "public", "fonts", "HindSiliguri-Bold.ttf")
+    );
+    const fontRegular = fs.readFileSync(
+      path.join(process.cwd(), "public", "fonts", "HindSiliguri-Regular.ttf")
+    );
 
     return new ImageResponse(
       (
