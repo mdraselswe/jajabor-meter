@@ -90,9 +90,9 @@ export default function BangladeshMap({
         />
 
         {/* View Switcher & Search Row */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3">
           {/* Quick Search Input */}
-          <div className="relative w-full md:w-60 lg:w-72 shrink-0">
+          <div className="relative flex-1 min-w-[160px] sm:min-w-[200px] max-w-sm">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
@@ -103,8 +103,8 @@ export default function BangladeshMap({
             />
           </div>
 
-          {/* Mode Switcher, District Names, Counter & Reset */}
-          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap justify-between sm:justify-end shrink-0">
+          {/* Mode Switcher, District Names & Reset */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-between sm:justify-end">
             <div className="flex items-center bg-slate-950 p-1 rounded-2xl border border-slate-800 shrink-0">
               <button
                 onClick={() => setViewMode("map")}
@@ -144,24 +144,13 @@ export default function BangladeshMap({
               </label>
             )}
 
-            {/* Counter */}
-            <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-2xl bg-slate-800/90 border border-slate-700 text-xs text-slate-200 shrink-0 whitespace-nowrap">
-              <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              <span className="whitespace-nowrap">
-                <strong className="text-white font-extrabold">{toBn(selectedCount)}</strong> / ৬৪
-              </span>
-              <span className="text-[11px] px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold whitespace-nowrap shrink-0">
-                {toBn(percentage)}%
-              </span>
-            </div>
-
             {selectedCount > 0 && (
               <button
                 onClick={onResetDistricts}
                 title="ম্যাপ রিসেট করুন"
-                className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-2xl bg-slate-800 hover:bg-rose-950/60 hover:text-rose-400 border border-slate-700 text-xs text-slate-300 transition active:scale-95 shrink-0 whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 hover:text-rose-200 border border-rose-500/30 text-xs font-bold transition active:scale-95 shrink-0 whitespace-nowrap cursor-pointer shadow-sm"
               >
-                <RotateCcw className="w-3.5 h-3.5 shrink-0" />
+                <RotateCcw className="w-3.5 h-3.5 shrink-0 text-rose-400" />
                 <span className="whitespace-nowrap">রিসেট</span>
               </button>
             )}
@@ -200,6 +189,24 @@ export default function BangladeshMap({
       {/* VIEW MODE 1: Interactive SVG Map */}
       {viewMode === "map" && (
         <div className="relative w-full aspect-[600/740] max-h-[700px] flex items-center justify-center overflow-hidden rounded-2xl bg-slate-950/60 border border-slate-800/80 p-2">
+          {/* Prominent Floating District & Percentage Badge */}
+          <div className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 z-10 flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 backdrop-blur-md shadow-2xl select-none pointer-events-none">
+            <div className="p-1 sm:p-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 shrink-0">
+              <MapPin className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-base sm:text-xl font-black text-white tracking-tight">
+                {toBn(selectedCount)}
+              </span>
+              <span className="text-xs sm:text-sm text-slate-300 font-bold">
+                / ৬৪ জেলা
+              </span>
+            </div>
+            <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl bg-emerald-500/20 text-emerald-300 font-black text-xs sm:text-sm border border-emerald-500/30 shadow-inner">
+              {toBn(percentage)}%
+            </span>
+          </div>
+
           <svg
             viewBox="0 0 600 760"
             className="w-full h-full object-contain filter drop-shadow-[0_10px_25px_rgba(0,0,0,0.6)] outline-none focus:outline-none select-none"
@@ -281,47 +288,64 @@ export default function BangladeshMap({
 
       {/* VIEW MODE 2: District List Grid (For users unfamiliar with map) */}
       {viewMode === "grid" && (
-        <div className="w-full max-h-[640px] overflow-y-auto pr-1 rounded-2xl bg-slate-950/50 p-3 border border-slate-800">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-            {filteredDistricts.map((d) => {
-              const isSelected = selectedDistrictIds.includes(d.id);
+        <div className="w-full flex flex-col gap-2.5">
+          <div className="flex items-center justify-between px-1">
+            <span className="text-xs text-slate-400 font-medium">
+              জেলা তালিকা থেকে ক্লিক করে সিলেক্ট করুন ({toBn(filteredDistricts.length)}টি জেলা)
+            </span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 shrink-0">
+              <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span>
+                <strong className="text-white font-black">{toBn(selectedCount)}</strong> / ৬৪ জেলা
+              </span>
+              <span className="text-[11px] px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold shrink-0">
+                {toBn(percentage)}%
+              </span>
+            </div>
+          </div>
 
-              return (
-                <div
-                  key={d.id}
-                  onClick={() => onToggleDistrict(d)}
-                  className={`p-3 rounded-2xl border text-left cursor-pointer transition-all duration-150 active:scale-[0.97] select-none flex flex-col justify-between ${
-                    isSelected
-                      ? "bg-emerald-950/60 border-emerald-500/80 text-emerald-100 shadow-md"
-                      : "bg-slate-900/80 border-slate-800 hover:border-slate-700 text-slate-300 hover:bg-slate-850"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="font-extrabold text-sm text-white">
-                      {d.nameBn}
+          <div className="w-full max-h-[640px] overflow-y-auto pr-1 rounded-2xl bg-slate-950/50 p-3 border border-slate-800">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+              {filteredDistricts.map((d) => {
+                const isSelected = selectedDistrictIds.includes(d.id);
+
+                return (
+                  <div
+                    key={d.id}
+                    onClick={() => onToggleDistrict(d)}
+                    className={`p-3 rounded-2xl border text-left cursor-pointer transition-all duration-150 active:scale-[0.97] select-none flex flex-col justify-between ${
+                      isSelected
+                        ? "bg-emerald-950/60 border-emerald-500/80 text-emerald-100 shadow-md"
+                        : "bg-slate-900/80 border-slate-800 hover:border-slate-700 text-slate-300 hover:bg-slate-850"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <span className="font-extrabold text-sm text-white">
+                        {d.nameBn}
+                      </span>
+                      <span
+                        className={`w-4 h-4 rounded-md border flex items-center justify-center text-[10px] ${
+                          isSelected
+                            ? "bg-emerald-500 border-emerald-500 text-slate-950 font-black"
+                            : "border-slate-700 bg-slate-800"
+                        }`}
+                      >
+                        {isSelected && "✓"}
+                      </span>
+                    </div>
+
+                    <span className="text-[10px] text-slate-400 font-medium">
+                      বিভাগ: {d.divisionBn}
                     </span>
-                    <span
-                      className={`w-4 h-4 rounded-md border flex items-center justify-center text-[10px] ${
-                        isSelected
-                          ? "bg-emerald-500 border-emerald-500 text-slate-950 font-black"
-                          : "border-slate-700 bg-slate-800"
-                      }`}
-                    >
-                      {isSelected && "✓"}
-                    </span>
-                  </div>
 
-                  <span className="text-[10px] text-slate-400 font-medium">
-                    বিভাগ: {d.divisionBn}
-                  </span>
-
-                  <div className="text-[11px] text-amber-300/90 font-medium mt-1 truncate flex items-center gap-1">
-                    <Utensils className="w-3 h-3 text-amber-400 shrink-0" />
-                    <span className="truncate">{d.food}</span>
+                    <div className="text-[11px] text-amber-300/90 font-medium mt-1 truncate flex items-center gap-1">
+                      <Utensils className="w-3 h-3 text-amber-400 shrink-0" />
+                      <span className="truncate">{d.food}</span>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
